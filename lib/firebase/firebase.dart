@@ -42,8 +42,8 @@ class FirebaseAPI{
     return await firestore.collection('users').doc(user!.uid).collection('accounts').doc(uuid.v4()).set(account.toMap());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> isCompleteRegistor()  {
-    return firestore.collection('users').doc(user!.uid).collection('accounts').snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAccount()  {
+    return firestore.collection('users').doc(user!.uid).collection('accounts').where('isMain', isEqualTo: true).snapshots();
   }
 
 }
