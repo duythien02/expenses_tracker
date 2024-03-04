@@ -29,12 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     _formKey.currentState!.save();
     try {
-      setState(() {
-        isAuthenticating = true;
-      });
       await FirebaseAPI.firebaseAuth
         .signInWithEmailAndPassword(
-          email: _email.text, password: _pass.text).whenComplete(() => Navigator.pop(context));
+          email: _email.text, password: _pass.text).then((value) {
+            setState(() {
+              isAuthenticating = true;
+            });
+            Navigator.pop(context);
+          });
     } on FirebaseAuthException {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
