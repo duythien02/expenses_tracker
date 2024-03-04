@@ -47,7 +47,16 @@ class MyApp extends StatelessWidget {
             fontSize: 16,
             color: kColorScheme.onSecondaryContainer,
           ),
+          bodyMedium: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+            color: kColorScheme.primaryContainer,
+          ),
         ),
+        
+        drawerTheme: DrawerThemeData().copyWith(
+          backgroundColor: kColorScheme.primary
+        )
       ),
       
       home: StreamBuilder(
@@ -55,7 +64,7 @@ class MyApp extends StatelessWidget {
         builder: (context,snapshot){
           if(snapshot.hasData){
             return StreamBuilder(
-              stream: FirebaseAPI.isCompleteRegistor(),
+              stream: FirebaseAPI.getAccount(),
               builder: (context,snapshot){
                 if(snapshot.connectionState == ConnectionState.waiting){
                   return const SyncDataScreen();
