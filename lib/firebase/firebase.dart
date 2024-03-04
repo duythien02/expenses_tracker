@@ -12,12 +12,6 @@ class FirebaseAPI{
 
   static User? get user => firebaseAuth.currentUser;
 
-  // static Future<bool> userExist() async {
-  //   return (
-  //     await firestore.collection('users').doc(user!.uid).get()
-  //     ).exists;
-  // }
-
   static Future<void> createNewUser (String userName, String email, String? image, String type) async {
     final newUser = UserModel(
       userId: user!.uid,
@@ -51,4 +45,5 @@ class FirebaseAPI{
   static Stream<QuerySnapshot<Map<String, dynamic>>> isCompleteRegistor()  {
     return firestore.collection('users').doc(user!.uid).collection('accounts').snapshots();
   }
+
 }

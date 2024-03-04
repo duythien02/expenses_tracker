@@ -1,4 +1,3 @@
-import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/sceens/home/home.dart';
 import 'package:expenses_tracker_app/sceens/profile/profile.dart';
