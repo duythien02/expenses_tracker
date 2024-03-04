@@ -30,16 +30,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   firebase_core: ^2.25.4
   firebase_auth: ^4.17.4
   eva_icons_flutter: ^3.1.0
   cloud_firestore: ^4.15.5
   shared_preferences: ^2.2.2
+  email_validator: ^2.1.17
+  uuid: ^4.3.3
+  google_sign_in: ^6.2.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +74,10 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/user_avatar.png
+  fonts:
+    - family: AppIcons
+      fonts:
+        - asset: assets/fonts/MyIcons.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
