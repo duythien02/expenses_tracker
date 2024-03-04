@@ -1,0 +1,133 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:expenses_tracker_app/firebase/firebase.dart';
+import 'package:expenses_tracker_app/sceens/auth/resister.dart';
+import 'package:expenses_tracker_app/sceens/auth/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+class AuthScreen extends StatelessWidget {
+  const AuthScreen({super.key});
+
+  _handleGoogleBtnClick(BuildContext context) {
+    _signInWithGoogle().then((user) async {
+      if (user != null) {
+        if(user.additionalUserInfo!.isNewUser){
+          await FirebaseAPI.createNewUser(
+            FirebaseAPI.user!.displayName!,
+            FirebaseAPI.user!.email!,
+            FirebaseAPI.user!.photoURL,
+            "Google"
+            );
+        }
+      }
+    });
+  }
+
+  Future<UserCredential?> _signInWithGoogle() async {
+    try {
+      await InternetAddress.lookup('google.com');
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      log('\n_signInWithGoogle: $e');
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Center(
+        child: Container(
+          margin: const EdgeInsets.only(top: 100),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 200,
+                child: Image.asset('assets/images/logo.png'),
+              ),
+              const Text(
+                'Đăng ký để lưu thông tin của bạn',
+                style: TextStyle(fontSize: 22),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterScreen()));
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
+                    fixedSize: const Size(250, 45)),
+                child: const Text(
+                  'Đăng ký',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal),
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LoginScreen()));
+                },
+                child: const Text(
+                  "Đăng nhập",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                ),
+              ),
+              const SizedBox(
+                height: 54,
+              ),
+              const Spacer(),
+              const Text(
+                "Đăng nhập với",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black),
+              ),
+              IconButton(
+                onPressed: () {
+                  _handleGoogleBtnClick(context);
+                },
+                icon: const Icon(EvaIconData(0xeaec)),
+              ),
+              const SizedBox(
+                height: 50,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
