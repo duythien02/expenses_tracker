@@ -82,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: 380,
                   child: TextFormField(
+                    autofocus: true,
                     controller: _email,
                     style: const TextStyle(fontSize: 18),
                     decoration: const InputDecoration(

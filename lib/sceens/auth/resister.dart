@@ -37,7 +37,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
         .createUserWithEmailAndPassword(
           email: _email.text, password: _pass.text)
         .then((user) async {
-        await FirebaseAPI.createNewUser(_userName.text, _email.text, null, "Email");
+        await FirebaseAPI.createNewUser(_userName.text, _email.text, null);
       });
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -79,6 +79,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   width: 380,
                   child: TextFormField(
+                    autofocus: true,
                     controller: _email,
                     style: const TextStyle(fontSize: 18),
                     decoration: const InputDecoration(
