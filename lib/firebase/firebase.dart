@@ -44,4 +44,14 @@ class FirebaseAPI{
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAccount()  {
     return firestore.collection('users').doc(user.uid).collection('accounts').snapshots();
   }
+
+  static Future<UserModel> getInfoUser() async {
+    DocumentSnapshot doc = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    UserModel curUser;
+    curUser = UserModel.fromMap(doc.data() as Map<String,dynamic>);
+    return curUser;
+  }
 }

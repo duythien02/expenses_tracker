@@ -1,13 +1,16 @@
 import 'package:expenses_tracker_app/main.dart';
+import 'package:expenses_tracker_app/models/user.dart';
 import 'package:expenses_tracker_app/sceens/home/home.dart';
-import 'package:expenses_tracker_app/sceens/profile/profile.dart';
+import 'package:expenses_tracker_app/sceens/drawer/profile.dart';
 import 'package:expenses_tracker_app/widgets/item_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+// ignore: must_be_immutable
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({super.key});
+  MainDrawer({super.key, required this.user});
+  UserModel user;
 
   @override
   Widget build(BuildContext context) {
@@ -16,40 +19,27 @@ class MainDrawer extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pop();
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ProfileScreen()),(route) => route.isFirst);
               },
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  color: kColorScheme.onPrimaryContainer,
-                  height: 66,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        child: Image.asset("assets/images/user_avatar.png"),
-                      ),
-                      const SizedBox(
-                        width: 18,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Tên người dùng',
-                              style: const TextTheme().bodyMedium),
-                          Text('Số dư', style: const TextTheme().bodyMedium)
-                        ],
-                      )
-                    ],
+              child: UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                    color: kColorScheme.onPrimaryContainer
                   ),
-                ),
+                  currentAccountPicture: CircleAvatar(
+                    radius: 30.0,
+                    backgroundImage: user.image == null 
+                      ? const AssetImage("assets/images/user_avatar.png") as ImageProvider
+                      : NetworkImage(user.image!),    
+                  ),
+                  accountName: Text('Tên người dùng: ${user.userName}'),
+                  accountEmail: Text('Email: ${user.email}')
+                  ),
               ),
             ItemDrawer(destination: const HomeScreen(), icon: Icons.home, title: "Trang chủ"),
             InkWell(
               onTap: () async {
-                await FirebaseAuth.instance.signOut();
+                await FirebaseAuth.instance.signOut().whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
                 await GoogleSignIn().signOut();
-                Navigator.popUntil(context, (route) => route.isFirst);
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
