@@ -42,19 +42,19 @@ class MyApp extends StatelessWidget {
           foregroundColor: kColorScheme.primaryContainer,
         ),
         textTheme: ThemeData().textTheme.copyWith(
-          titleLarge: TextStyle(
+          titleLarge: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: kColorScheme.onSecondaryContainer,
+            fontSize: 18,
+            color: Colors.white,
           ),
-          bodyMedium: TextStyle(
+          bodyMedium: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
-            color: kColorScheme.primaryContainer,
+            color: Colors.white,
           ),
         ),
         
-        drawerTheme: DrawerThemeData().copyWith(
+        drawerTheme: const DrawerThemeData().copyWith(
           backgroundColor: kColorScheme.primary
         )
       ),
