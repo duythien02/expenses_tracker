@@ -54,7 +54,7 @@ class WelcomScreen3 extends StatelessWidget {
                           height: 70,
                           child: TextFormField(
                             controller: balance,
-                            maxLength: 16,
+                            maxLength: 15,
                             autofocus: true,
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
