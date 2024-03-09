@@ -10,22 +10,21 @@ class FirebaseAPI{
 
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  static User? get user => firebaseAuth.currentUser;
+  static User get user => firebaseAuth.currentUser!;
 
-  static Future<void> createNewUser (String userName, String email, String? image, String type) async {
+  static Future<void> createNewUser (String userName, String email, String? image) async {
     final newUser = UserModel(
-      userId: user!.uid,
+      userId: user.uid,
       userName: userName,
       email: email,
       image: image,
-      type: type
     );
-    return await firestore.collection('users').doc(user!.uid).set(newUser.toMap());
+    return await firestore.collection('users').doc(user.uid).set(newUser.toMap());
   }
 
   static Future<void> completeRegistration(String name, int balance, String curCode, String curName, String curSymbol, String symbol, int color) async {
     for(var category in defaultCategories){
-      await firestore.collection('users').doc(user!.uid).collection('categories').doc(category.categoryId).set(category.toMap());
+      await firestore.collection('users').doc(user.uid).collection('categories').doc(category.categoryId).set(category.toMap());
     }
     var uuid = const Uuid();
     final account = Account(
@@ -39,11 +38,20 @@ class FirebaseAPI{
       color: color,
       isMain: true
     );
-    return await firestore.collection('users').doc(user!.uid).collection('accounts').doc(uuid.v4()).set(account.toMap());
+    return await firestore.collection('users').doc(user.uid).collection('accounts').doc(uuid.v4()).set(account.toMap());
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAccount()  {
-    return firestore.collection('users').doc(user!.uid).collection('accounts').where('isMain', isEqualTo: true).snapshots();
+    return firestore.collection('users').doc(user.uid).collection('accounts').snapshots();
   }
 
+  static Future<UserModel> getInfoUser() async {
+    DocumentSnapshot doc = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    UserModel curUser;
+    curUser = UserModel.fromMap(doc.data() as Map<String,dynamic>);
+    return curUser;
+  }
 }

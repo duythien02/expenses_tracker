@@ -5,14 +5,12 @@ class UserModel{
   late String userName;
   late String email;
   String? image;
-  late String type;
 
   UserModel({
     required this.userId,
     required this.userName,
     required this.email,
     this.image,
-    required this.type
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -21,7 +19,6 @@ class UserModel{
       userName: map['userName'] as String,
       email: map['email'] as String,
       image: map['image'], // No type casting, allows null value
-      type: map['type'] as String
     );
   }
 
@@ -31,7 +28,6 @@ class UserModel{
       "userName" : userName,
       "email" : email,
       "image" : image,
-      "type" : type
     });
   }
 }

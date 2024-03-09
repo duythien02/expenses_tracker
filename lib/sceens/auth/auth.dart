@@ -17,10 +17,9 @@ class AuthScreen extends StatelessWidget {
       if (user != null) {
         if(user.additionalUserInfo!.isNewUser){
           await FirebaseAPI.createNewUser(
-            FirebaseAPI.user!.displayName!,
-            FirebaseAPI.user!.email!,
-            FirebaseAPI.user!.photoURL,
-            "Google"
+            FirebaseAPI.user.displayName!,
+            FirebaseAPI.user.email!,
+            FirebaseAPI.user.photoURL,
             );
         }
       }
@@ -66,7 +65,7 @@ class AuthScreen extends StatelessWidget {
               ),
               const Text(
                 'Đăng ký để lưu thông tin của bạn',
-                style: TextStyle(fontSize: 22),
+                style: TextStyle(fontSize: 22,color: Colors.black),
               ),
               const SizedBox(
                 height: 24,
