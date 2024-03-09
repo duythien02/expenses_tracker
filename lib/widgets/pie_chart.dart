@@ -1,5 +1,5 @@
 import 'package:expenses_tracker_app/models/account.dart';
-import 'package:expenses_tracker_app/sceens/category/add_category.dart';
+import 'package:expenses_tracker_app/sceens/category/add_expense.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
