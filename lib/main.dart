@@ -34,9 +34,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: kColorScheme.primaryContainer,
-            foregroundColor: kColorScheme.onPrimaryContainer,
+            backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
+            foregroundColor: const Color.fromRGBO(255, 177, 32, 1),
+            fixedSize: const Size(250, 45),
+            disabledBackgroundColor: const Color.fromARGB(124, 255, 177, 32)
           ),
+
         ),
         appBarTheme: const AppBarTheme().copyWith(
           backgroundColor: kColorScheme.primary,

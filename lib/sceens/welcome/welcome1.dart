@@ -33,7 +33,6 @@ class WelcomScreen1 extends StatelessWidget {
                       onPressed: () async{
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const WelcomScreen2()));
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(255, 177, 32, 1),fixedSize: const Size(250,45)),
                       child: const Text('Bắt đầu', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),),
                       
                     ),

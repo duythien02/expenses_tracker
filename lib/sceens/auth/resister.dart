@@ -196,9 +196,6 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 ),
                 ElevatedButton(
                   onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
-                      fixedSize: const Size(250, 45)),
                   child: const Text(
                     'Tiếp theo',
                     style: TextStyle(

@@ -86,7 +86,6 @@ class WelcomScreen3 extends StatelessWidget {
                       await FirebaseAPI.completeRegistration('Chính', int.parse(balance.text), currency.code, currency.name, currency.symbol, "0xe808", 4285132974)
                       .then((value) => Navigator.popUntil(context ,(route) => route.isFirst));
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(255, 177, 32, 1),fixedSize: const Size(250,45)),
                     child: const Text('Tiếp theo', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),),
                     
                   ),
