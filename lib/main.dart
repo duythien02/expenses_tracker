@@ -1,5 +1,6 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/firebase_options.dart';
+import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/sceens/auth/auth.dart';
 import 'package:expenses_tracker_app/sceens/home/home.dart';
 import 'package:expenses_tracker_app/sceens/welcome/sync_data.dart';
@@ -9,7 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 var kColorScheme =
-    ColorScheme.fromSeed(seedColor: const Color.fromARGB(1, 104, 252, 208));
+    ColorScheme.fromSeed(seedColor: Color.fromARGB(1, 192, 254, 252));
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,7 +71,9 @@ class MyApp extends StatelessWidget {
                   return const SyncDataScreen();
                 }
                 if(snapshot.hasData){
-                  return const HomeScreen();
+                  final data = snapshot.data!.docs;
+                  List<Account> list = data.map((e) => Account.fromMap(e.data())).toList();
+                  return HomeScreen(list: list,);
                 }
                 return const WelcomScreen1();
               }
