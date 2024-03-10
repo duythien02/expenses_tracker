@@ -10,7 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 var kColorScheme =
-    ColorScheme.fromSeed(seedColor: Color.fromARGB(1, 192, 254, 252));
+    ColorScheme.fromSeed(seedColor: const Color.fromARGB(1, 187, 199, 198));
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
         appBarTheme: const AppBarTheme().copyWith(
           backgroundColor: kColorScheme.primary,
-          foregroundColor: kColorScheme.primaryContainer,
+          foregroundColor: kColorScheme.onPrimary,
         ),
         textTheme: ThemeData().textTheme.copyWith(
           titleLarge: const TextStyle(
