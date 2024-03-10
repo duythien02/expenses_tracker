@@ -50,7 +50,7 @@ class WelcomScreen3 extends StatelessWidget {
                         key: formKey,
                         child: Container(
                           margin: const EdgeInsets.only(top: 5),
-                          width: 140,
+                          width: 120,
                           height: 70,
                           child: TextFormField(
                             controller: balance,
