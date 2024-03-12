@@ -73,12 +73,13 @@ class MyApp extends StatelessWidget {
                 if(snapshot.connectionState == ConnectionState.waiting){
                   return const SyncDataScreen();
                 }
-                if(snapshot.hasData){
+                if(snapshot.data!.docs.isNotEmpty){
                   final data = snapshot.data!.docs;
-                  List<Account> list = data.map((e) => Account.fromMap(e.data())).toList();
-                  return HomeScreen(list: list,);
+                  List<Account> listAccount = data.map((e) => Account.fromMap(e.data())).toList();
+                  return HomeScreen(list: listAccount,);
+                }else{
+                  return const WelcomScreen1();
                 }
-                return const WelcomScreen1();
               }
             );
           }
