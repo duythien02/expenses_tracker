@@ -37,7 +37,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
         .createUserWithEmailAndPassword(
           email: _email.text, password: _pass.text)
         .then((user) async {
-        await FirebaseAPI.createNewUser(_userName.text, _email.text, null);
+        await FirebaseAPI.createNewUser(_userName.text, _email.text, null).then((value) => Navigator.pop(context));
       });
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
