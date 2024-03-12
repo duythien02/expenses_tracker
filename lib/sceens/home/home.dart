@@ -2,7 +2,7 @@ import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/widgets/expense_card.dart';
-import 'package:expenses_tracker_app/widgets/main_drawer.dart';
+import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/pie_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -67,7 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: FutureBuilder(
         future: FirebaseAPI.getInfoUser(),
         builder: (context, user) {
-          if (user.connectionState == ConnectionState.done) {
+          if(user.connectionState == ConnectionState.waiting){
+            return const Center(child: CircularProgressIndicator(),);
+          }
+          if (user.hasData) {
             return MainDrawer(
               user: user.data!,
             );
@@ -149,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               HomePieChart(
                 isExpense: isExpense,
-                account: widget.list[0],
+                listAccount: widget.list,
               ),
               Expanded(
                 child: ListView.builder(

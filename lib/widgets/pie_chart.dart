@@ -1,13 +1,13 @@
 import 'package:expenses_tracker_app/models/account.dart';
-import 'package:expenses_tracker_app/sceens/category/add_expense.dart';
+import 'package:expenses_tracker_app/sceens/home/add_expense.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class HomePieChart extends StatefulWidget {
-  HomePieChart({super.key, required this.isExpense, required this.account});
+  HomePieChart({super.key, required this.isExpense, required this.listAccount});
   bool isExpense;
-  Account account;
+  List<Account> listAccount;
 
   @override
   State<HomePieChart> createState() => _HomePieChartState();
@@ -60,7 +60,7 @@ class _HomePieChartState extends State<HomePieChart> {
                 alignment: Alignment.center,
                 children: [
                   Text(
-                    '${widget.account.accountBalance}',
+                    '${widget.listAccount[0].accountBalance}',
                     style: const TextStyle(color: Colors.black),
                   ),
                   SizedBox(
@@ -91,7 +91,7 @@ class _HomePieChartState extends State<HomePieChart> {
                         child: IconButton(
                           color: Colors.black,
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AddExpense(isExpense: widget.isExpense,account: widget.account,)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AddExpense(isExpense: widget.isExpense,listAccount: widget.listAccount,)));
                           },
                           icon: const Icon(Icons.add)
                         ),
