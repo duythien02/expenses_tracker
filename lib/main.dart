@@ -1,5 +1,6 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/firebase_options.dart';
+import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/sceens/auth/auth.dart';
 import 'package:expenses_tracker_app/sceens/home/home.dart';
 import 'package:expenses_tracker_app/sceens/welcome/sync_data.dart';
@@ -9,7 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 var kColorScheme =
-    ColorScheme.fromSeed(seedColor: const Color.fromARGB(1, 104, 252, 208));
+    ColorScheme.fromSeed(seedColor: const Color.fromARGB(1, 187, 199, 198));
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,13 +34,16 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: kColorScheme.primaryContainer,
-            foregroundColor: kColorScheme.onPrimaryContainer,
+            backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
+            foregroundColor: const Color.fromRGBO(255, 177, 32, 1),
+            fixedSize: const Size(250, 45),
+            disabledBackgroundColor: const Color.fromARGB(124, 255, 177, 32)
           ),
+
         ),
         appBarTheme: const AppBarTheme().copyWith(
           backgroundColor: kColorScheme.primary,
-          foregroundColor: kColorScheme.primaryContainer,
+          foregroundColor: kColorScheme.onPrimary,
         ),
         textTheme: ThemeData().textTheme.copyWith(
           titleLarge: const TextStyle(
@@ -69,10 +73,13 @@ class MyApp extends StatelessWidget {
                 if(snapshot.connectionState == ConnectionState.waiting){
                   return const SyncDataScreen();
                 }
-                if(snapshot.hasData){
-                  return const HomeScreen();
+                if(snapshot.data!.docs.isNotEmpty){
+                  final data = snapshot.data!.docs;
+                  List<Account> listAccount = data.map((e) => Account.fromMap(e.data())).toList();
+                  return HomeScreen(list: listAccount,);
+                }else{
+                  return const WelcomScreen1();
                 }
-                return const WelcomScreen1();
               }
             );
           }

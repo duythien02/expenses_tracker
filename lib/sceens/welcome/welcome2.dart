@@ -101,7 +101,6 @@ class _WelcomScreen2State extends State<WelcomScreen2> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomScreen3(currency: currencies[currencies.indexWhere((e) => e.picked == true)],)));
                       }
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(255, 177, 32, 1),fixedSize: const Size(250,45)),
                     child: const Text('Tiếp theo', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),),
                     
                   ),

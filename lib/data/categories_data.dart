@@ -42,14 +42,14 @@ List<Category> defaultCategories = [
   Category(
     categoryId: uuid.v4(),
     categoryName: "Lương",
-    type: Type.expense.name,
+    type: Type.income.name,
     symbol: "0xe806",
     color: 4283215696
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Quà Tặng",
-    type: Type.expense.name,
+    type: Type.income.name,
     symbol: "0xe807",
     color: 4294198070
   ),

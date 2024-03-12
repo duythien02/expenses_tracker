@@ -1,5 +1,5 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
-import 'package:expenses_tracker_app/widgets/main_drawer.dart';
+import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {

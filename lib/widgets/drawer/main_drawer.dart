@@ -1,8 +1,6 @@
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/user.dart';
-import 'package:expenses_tracker_app/sceens/home/home.dart';
 import 'package:expenses_tracker_app/sceens/drawer/profile.dart';
-import 'package:expenses_tracker_app/widgets/item_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -34,8 +32,23 @@ class MainDrawer extends StatelessWidget {
                   accountName: Text('Tên người dùng: ${user.userName}'),
                   accountEmail: Text('Email: ${user.email}')
                   ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: const Row(
+                  children: [
+                    Icon(Icons.home,color: Colors.white,),
+                    SizedBox(width: 20,),
+                    Text('Trang chủ')
+                  ],
+                ),
               ),
-            ItemDrawer(destination: const HomeScreen(), icon: Icons.home, title: "Trang chủ"),
+            ),
             InkWell(
               onTap: () async {
                 await FirebaseAuth.instance.signOut().whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
@@ -51,7 +64,7 @@ class MainDrawer extends StatelessWidget {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       );

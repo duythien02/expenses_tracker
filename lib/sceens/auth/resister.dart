@@ -37,7 +37,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
         .createUserWithEmailAndPassword(
           email: _email.text, password: _pass.text)
         .then((user) async {
-        await FirebaseAPI.createNewUser(_userName.text, _email.text, null);
+        await FirebaseAPI.createNewUser(_userName.text, _email.text, null).then((value) => Navigator.pop(context));
       });
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -196,9 +196,6 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 ),
                 ElevatedButton(
                   onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
-                      fixedSize: const Size(250, 45)),
                   child: const Text(
                     'Tiếp theo',
                     style: TextStyle(

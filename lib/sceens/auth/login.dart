@@ -1,6 +1,5 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:expenses_tracker_app/firebase/firebase.dart';
-import 'package:expenses_tracker_app/helper/helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _pass = TextEditingController();
 
-  bool isAuthenticating = false;
 
   late bool _passwordVisible;
 
@@ -32,9 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
       await FirebaseAPI.firebaseAuth
         .signInWithEmailAndPassword(
           email: _email.text, password: _pass.text).then((value) {
-            setState(() {
-              isAuthenticating = true;
-            });
             Navigator.pop(context);
           });
     } on FirebaseAuthException {
@@ -63,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: TextStyle(fontSize: 20),
         ),
       ),
-      body: isAuthenticating ? loading() : SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Center(
@@ -144,9 +139,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     _submit();
                   },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
-                      fixedSize: const Size(250, 45)),
                   child: const Text(
                     'Đăng nhập',
                     style: TextStyle(
