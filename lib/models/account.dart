@@ -45,7 +45,7 @@ class Account{
       currencySymbol: map['currencySymbol'] as String,
       symbol: map['symbol'] as String,
       color: map['color'] as int,
-      isMain: map['isMain'] as bool
+      isMain: map['isMain']
     );
   }
 }
