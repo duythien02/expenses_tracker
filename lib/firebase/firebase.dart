@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses_tracker_app/data/categories_data.dart';
 import 'package:expenses_tracker_app/models/account.dart';
+import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -50,8 +51,16 @@ class FirebaseAPI{
         .collection('users')
         .doc(user.uid)
         .get();
-    UserModel curUser;
-    curUser = UserModel.fromMap(doc.data() as Map<String,dynamic>);
+    UserModel curUser = UserModel.fromMap(doc.data() as Map<String,dynamic>);
     return curUser;
+  }
+
+  static Future<List<Category>> getAllCategories() async {
+    QuerySnapshot querySnapshot = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('categories').get();
+    List<Category> listCategory = querySnapshot.docs.map((e) => Category.fromMap(e.data() as Map<String,dynamic>)).toList();
+    return listCategory;
   }
 }
