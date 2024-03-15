@@ -28,7 +28,6 @@ class HomePieChart extends StatelessWidget {
   }
 
   double getTotalEachCategory(List<Expense> list) {
-    
     double total = 0;
     for (var expense in list) {
       total += expense.amount;
@@ -36,7 +35,7 @@ class HomePieChart extends StatelessWidget {
     return total;
   }
 
-  int getColor(List<Expense> list){
+  int getColor(List<Expense> list) {
     return list[0].color;
   }
 
@@ -84,23 +83,40 @@ class HomePieChart extends StatelessWidget {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  Text(
-                    '${getTotalExpense()}',
-                    style: const TextStyle(color: Colors.black),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width - 300,
+                    width: MediaQuery.of(context).size.width - 300,
+                    child: Center(
+                      child: Text(
+                        listExpense.isNotEmpty 
+                            ? '${getTotalExpense()}'
+                            : isExpense ? 'Không có chi phí nào' : 'Không có thu nhập nào',
+                        style: const TextStyle(color: Colors.black, fontSize: 22), textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.width - 170,
                     child: PieChart(
-                        swapAnimationDuration:
-                            const Duration(milliseconds: 500),
-                        PieChartData(
-                            sections: List.generate(
-                          listExpense.length,
-                          (index) => PieChartSectionData(
-                              value: getTotalEachCategory(listExpense[index]),
-                              showTitle: false,
-                              color: Color(getColor(listExpense[index]))),
-                        ))),
+                      swapAnimationDuration: const Duration(milliseconds: 500),
+                      PieChartData(
+                        sections: listExpense.isNotEmpty
+                            ? List.generate(
+                                listExpense.length,
+                                (index) => PieChartSectionData(
+                                    value: getTotalEachCategory(
+                                        listExpense[index]),
+                                    showTitle: false,
+                                    color: Color(getColor(listExpense[index]))),
+                              )
+                            : [
+                                PieChartSectionData(
+                                    value: 1,
+                                    showTitle: false,
+                                    color: Colors.grey),
+                              ],
+                      ),
+                    ),
                   ),
                   Positioned(
                     right: 0,
