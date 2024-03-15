@@ -33,4 +33,6 @@ class MyIcon {
   static const IconData salary = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData gift = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData money = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData investment = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData business = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
