@@ -53,4 +53,18 @@ List<Category> defaultCategories = [
     symbol: "0xe807",
     color: 4294198070
   ),
+  Category(
+    categoryId: uuid.v4(),
+    categoryName: "Đầu tư",
+    type: Type.income.name,
+    symbol: "0xe809",
+    color: 4278238420
+  ),
+  Category(
+    categoryId: uuid.v4(),
+    categoryName: "Kinh doanh",
+    type: Type.income.name,
+    symbol: "0xe80a",
+    color: 4293467747
+  ),
 ];

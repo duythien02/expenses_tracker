@@ -5,14 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
-class WelcomScreen3 extends StatelessWidget {
+class WelcomScreen3 extends StatefulWidget {
   WelcomScreen3({super.key, required this.currency});
 
   final Currency currency;
 
+  @override
+  State<WelcomScreen3> createState() => _WelcomScreen3State();
+}
+
+class _WelcomScreen3State extends State<WelcomScreen3> {
   TextEditingController balance = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+
+  bool isSubmited = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,20 +81,22 @@ class WelcomScreen3 extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8,),
-                      Expanded(child: Text(currency.code, style: const TextStyle(color: Colors.black,fontSize: 20))),
+                      Expanded(child: Text(widget.currency.code, style: const TextStyle(color: Colors.black,fontSize: 20))),
                     ],
                   ),
                   const Spacer(),
                   ElevatedButton (
-                    onPressed: () async {
+                    onPressed: isSubmited ? null : () async {
                       if(formKey.currentState!.validate() == true){
                         formKey.currentState!.save();
+                        setState(() {
+                          isSubmited = true;
+                        });
                       }
-                      await FirebaseAPI.completeRegistration('Chính', int.parse(balance.text), currency.code, currency.name, currency.symbol, "0xe808", 4285132974)
+                      await FirebaseAPI.completeRegistration('Chính', int.parse(balance.text), widget.currency.code, widget.currency.name, widget.currency.symbol, "0xe808", 4285132974)
                       .then((value) => Navigator.popUntil(context ,(route) => route.isFirst));
                     },
-                    child: const Text('Tiếp theo', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),),
-                    
+                    child: !isSubmited ? const Text('Hoàn thành', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),) : const CircularProgressIndicator(),
                   ),
                 ],
               ),
