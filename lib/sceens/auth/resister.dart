@@ -17,6 +17,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _userName = TextEditingController();
   final TextEditingController _pass = TextEditingController();
+  bool isSubmited = false;
 
   @override
   void initState() {
@@ -32,15 +33,22 @@ class _ResisterScreenState extends State<RegisterScreen> {
       return;
     }
     _formKey.currentState!.save();
+    setState(() {
+      isSubmited = true;
+    });
     try {
       await FirebaseAPI.firebaseAuth
-        .createUserWithEmailAndPassword(
-          email: _email.text, password: _pass.text)
-        .then((user) async {
-        await FirebaseAPI.createNewUser(_userName.text, _email.text, null).then((value) => Navigator.pop(context));
+          .createUserWithEmailAndPassword(
+              email: _email.text, password: _pass.text)
+          .then((user) async {
+        await FirebaseAPI.createNewUser(_userName.text, _email.text, null)
+            .then((value) => Navigator.pop(context));
       });
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
+        setState(() {
+          isSubmited = false;
+        });
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -195,14 +203,14 @@ class _ResisterScreenState extends State<RegisterScreen> {
                   height: 40,
                 ),
                 ElevatedButton(
-                  onPressed: _submit,
-                  child: const Text(
+                  onPressed: isSubmited ? null : _submit,
+                  child: !isSubmited ? const Text(
                     'Tiếp theo',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.normal),
-                  ),
+                  ) : const CircularProgressIndicator(),
                 ),
               ],
             ),
