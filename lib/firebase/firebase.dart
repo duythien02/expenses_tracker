@@ -52,7 +52,7 @@ class FirebaseAPI {
         accountBalance: balance,
         currencyCode: curCode,
         currencyName: curName,
-        currencySymbol: curSymbol,
+        currencyLocale: curSymbol,
         symbol: symbol,
         color: color,
         isMain: true);
