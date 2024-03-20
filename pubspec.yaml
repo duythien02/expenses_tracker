@@ -44,6 +44,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   fl_chart: ^0.66.2
   collection: ^1.18.0
+  sticky_headers: ^0.3.0+2
+  intl: ^0.18.1
 
 flutter_launcher_icons:
   android: "ic_launcher"
