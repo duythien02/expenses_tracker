@@ -93,7 +93,7 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                           isSubmited = true;
                         });
                       }
-                      await FirebaseAPI.completeRegistration('Chính', int.parse(balance.text), widget.currency.code, widget.currency.name, widget.currency.symbol, "0xe808", 4285132974)
+                      await FirebaseAPI.completeRegistration('Chính', int.parse(balance.text), widget.currency.code, widget.currency.name, widget.currency.locale, "0xe808", 4285132974)
                       .then((value) => Navigator.popUntil(context ,(route) => route.isFirst));
                     },
                     child: !isSubmited ? const Text('Hoàn thành', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),) : const CircularProgressIndicator(),
