@@ -3,6 +3,7 @@ import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/sceens/home/add_expense.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class HomePieChart extends StatelessWidget {
@@ -33,6 +34,11 @@ class HomePieChart extends StatelessWidget {
       total += expense.amount;
     }
     return total;
+  }
+
+    String moneyFormat(){
+    var format = NumberFormat.simpleCurrency(locale: currentAccount.currencyLocale);
+    return format.format(getTotalExpense());
   }
 
   int getColor(List<Expense> list) {
@@ -89,7 +95,7 @@ class HomePieChart extends StatelessWidget {
                     child: Center(
                       child: Text(
                         listExpense.isNotEmpty 
-                            ? '${getTotalExpense()}'
+                            ? moneyFormat()
                             : isExpense ? 'Không có chi phí nào' : 'Không có thu nhập nào',
                         style: const TextStyle(color: Colors.black, fontSize: 22), textAlign: TextAlign.center,
                       ),
