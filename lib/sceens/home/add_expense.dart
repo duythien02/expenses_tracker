@@ -4,6 +4,7 @@ import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/widgets/home/category_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
@@ -33,14 +34,14 @@ class _AddExpenseState extends State<AddExpense> {
   bool isSubmited = false;
 
   void addExpense() async {
-    setState(() {
-      isSubmited = true;
-    });
     final isValidForm = formKey.currentState!.validate();
     if (!isValidForm) {
       return;
     }
     formKey.currentState!.save();
+    setState(() {
+      isSubmited = true;
+    });
     if (note.text.isEmpty) {
       await FirebaseAPI.addExpense(
               int.parse(amount.text),
@@ -60,6 +61,11 @@ class _AddExpenseState extends State<AddExpense> {
               widget.isExpense)
           .whenComplete(() => Navigator.pop(context));
     }
+  }
+
+  String moneyFormat(int number){
+    var format = NumberFormat.simpleCurrency(locale: widget.currentAccount.currencyLocale);
+    return format.format(number);
   }
 
   @override
@@ -175,7 +181,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 FilteringTextInputFormatter.deny(RegExp('-')),
                               ],
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (value == null || value.isEmpty || int.parse(value) == 0) {
                                   return 'Số tiền không hợp lệ';
                                 }
                                 return null;
@@ -230,9 +236,9 @@ class _AddExpenseState extends State<AddExpense> {
                                               (index) => RadioListTile(
                                                     title: Text(widget
                                                         .listAccount[index]
-                                                        .accountName),
+                                                        .accountName, style: const TextStyle(fontWeight: FontWeight.w400),),
                                                     subtitle: Text(
-                                                        '${widget.listAccount[index].accountBalance} ${widget.listAccount[index].currencySymbol}'),
+                                                        moneyFormat(widget.listAccount[index].accountBalance)),
                                                     value: widget
                                                         .listAccount[index],
                                                     groupValue:
@@ -345,17 +351,19 @@ class _AddExpenseState extends State<AddExpense> {
                         ),
                         IconButton(
                             onPressed: () async {
+                              print(selectedDate);
                               final DateTime? dateTime = await showDatePicker(
                                 context: context,
                                 initialDate: selectedDate,
                                 firstDate: DateTime(2000),
-                                locale: const Locale('vi'),
+                                locale: const Locale('vi', 'VI'),
                                 lastDate: DateTime.now(),
                               );
                               if (dateTime != null) {
                                 setState(() {
                                   selectedDate = dateTime;
                                 });
+                                
                               }
                             },
                             icon: const Icon(Icons.date_range))

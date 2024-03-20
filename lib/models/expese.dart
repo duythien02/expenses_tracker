@@ -26,7 +26,7 @@ class Expense{
       expenseId: map['expenseId'] as String,
       categoryId: map['categoryId'] as String,
       amount: map['amount'] as int,
-      date: DateTime.fromMicrosecondsSinceEpoch(map['date'] as int, isUtc: true),
+      date: DateTime.fromMicrosecondsSinceEpoch(map['date'] as int),
       categoryName: map['categoryName'] as String,
       type: map['type'] as String,
       symbol: map['symbol'] as String,

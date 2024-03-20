@@ -30,14 +30,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('vi', 'VI'),
+        Locale('en','US'),
+        Locale('vi','VN'),
       ],
       debugShowCheckedModeBanner: false,
       title: 'Expenses Tracker App',
       theme: ThemeData(
           colorScheme: kColorScheme,
           useMaterial3: true,
+          scaffoldBackgroundColor: Colors.white,
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(255, 177, 32, 1),

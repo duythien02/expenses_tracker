@@ -7,6 +7,7 @@ import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/home/expense_card_item.dart';
 import 'package:expenses_tracker_app/widgets/home/pie_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class HomeScreen extends StatefulWidget {
       {super.key,
       required this.listAccount,
       required this.currentAccount,
-      required this.expenseData});
+      required this.expenseData,});
   final List<Account> listAccount;
   Account currentAccount;
   Map<dynamic, List<Expense>>? expenseData;
@@ -43,6 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
     return newMap;
+  }
+
+  double getTotalExpense(){
+    double total = 0;
+    convertMap(widget.expenseData!).values.forEach((element) {
+      for(var expense in element){
+        total += expense.amount;
+      }
+    });
+    return total;
+  }
+
+  String moneyFormat(int number){
+    var format = NumberFormat.simpleCurrency(locale: widget.currentAccount.currencyLocale);
+    return format.format(number);
   }
 
   @override
@@ -74,9 +90,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     widget.listAccount.length,
                                     (index) => RadioListTile(
                                           title: Text(widget
-                                              .listAccount[index].accountName),
+                                              .listAccount[index].accountName,style: const TextStyle(fontWeight: FontWeight.w400),),
                                           subtitle: Text(
-                                              '${widget.listAccount[index].accountBalance} ${widget.listAccount[index].currencySymbol}'),
+                                              moneyFormat(widget.listAccount[index].accountBalance)),
                                           value: widget.listAccount[index],
                                           groupValue: widget.currentAccount,
                                           onChanged: (value) {
@@ -113,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "${widget.currentAccount.accountBalance} ${widget.currentAccount.currencySymbol}",
+                moneyFormat(widget.currentAccount.accountBalance),
                 style: const TextStyle(color: Colors.white, fontSize: 22),
               ),
               const SizedBox(
@@ -226,6 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) => ExpenseCard(
                     listExpense: convertMap(widget.expenseData!).values.elementAt(index),
                     account: widget.currentAccount,
+                    total: getTotalExpense(),
                   ),
                 ),
               )

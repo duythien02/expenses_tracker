@@ -17,7 +17,7 @@ class MainDrawer extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ProfileScreen()),(route) => route.isFirst);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ProfileScreen(user: user,)),(route) => route.isFirst);
               },
               child: UserAccountsDrawerHeader(
                   decoration: BoxDecoration(
@@ -51,8 +51,18 @@ class MainDrawer extends StatelessWidget {
             ),
             InkWell(
               onTap: () async {
-                await FirebaseAuth.instance.signOut().whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
-                await GoogleSignIn().signOut();
+                Navigator.pop(context);
+                await showDialog(context: context, builder: (context) => AlertDialog(
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
+                    TextButton(onPressed: () async {
+                      await FirebaseAuth.instance.signOut().whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
+                      await GoogleSignIn().signOut();
+                    }, child: const Text('Thoát')),
+                  ],
+                  contentPadding: const EdgeInsets.all(32),
+                  content: const Text('Bạn có muốn đăng xuất không?', style: TextStyle(color: Colors.black),),
+                ));
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
