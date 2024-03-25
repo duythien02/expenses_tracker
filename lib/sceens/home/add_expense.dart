@@ -29,7 +29,7 @@ class _AddExpenseState extends State<AddExpense> {
   TextEditingController note = TextEditingController();
   final getCategory = FirebaseAPI.getAllCategories();
   List<Category> subListCategory = [];
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.utc(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
   bool isCategoryPicked = false;
   bool isSubmited = false;
 
