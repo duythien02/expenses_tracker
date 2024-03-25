@@ -1,6 +1,5 @@
 // ignore: library_prefixes
-import 'package:calendar_date_picker2/calendar_date_picker2.dart'
-    as rangePicker;
+import 'package:calendar_date_picker2/calendar_date_picker2.dart' as rangePicker;
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
