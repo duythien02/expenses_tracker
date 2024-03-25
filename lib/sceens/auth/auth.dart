@@ -93,7 +93,7 @@ class AuthScreen extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => LoginScreen()));
+                          builder: (context) => const LoginScreen()));
                 },
                 child: const Text(
                   "Đăng nhập",

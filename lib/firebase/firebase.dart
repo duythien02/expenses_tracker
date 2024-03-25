@@ -85,10 +85,8 @@ class FirebaseAPI {
         .doc(user.uid)
         .collection('categories')
         .get();
-    List<Category> listCategory = querySnapshot.docs
-        .map((e) => Category.fromMap(e.data() as Map<String, dynamic>))
+    return querySnapshot.docs.map((e) => Category.fromMap(e.data() as Map<String, dynamic>))
         .toList();
-    return listCategory;
   }
 
   static Future<void> addExpense(int amount, Category category, DateTime date,
@@ -115,10 +113,10 @@ class FirebaseAPI {
         .doc(newExpense.expenseId)
         .set(newExpense.toMap())
         .whenComplete(() async =>
-            await deductMoneyFromAccount(account, amount, isExpense));
+            await calMoneyFromAccount(account, amount, isExpense));
   }
 
-  static Future<void> deductMoneyFromAccount(
+  static Future<void> calMoneyFromAccount(
       Account account, int amount, bool isExpense) async {
     DocumentSnapshot documentSnapshot = await firestore
         .collection('users')
@@ -157,10 +155,10 @@ class FirebaseAPI {
     List<Expense> listExpense = [];
     Map<String,List<Expense>> groupedExpenses = {};
     return getAllExpense(account).map((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((DocumentSnapshot doc) {
+      for(DocumentSnapshot doc in snapshot.docs){
         listExpense.add(Expense.fromMap(doc.data() as Map<String, dynamic>));
         groupedExpenses = groupBy(listExpense, (expense) => expense.categoryId);
-      });
+      }
       return groupedExpenses;
     });
   }

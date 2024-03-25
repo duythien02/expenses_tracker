@@ -18,10 +18,10 @@ class _WelcomScreen2State extends State<WelcomScreen2> {
   final List<Currency> _searchList = [];
   bool pickCurrency = false;
 
-  void _runFilter(String _enteredKeyword) {
+  void _runFilter(String enteredKeyword) {
     _searchList.clear();
     for (var currency in currencies) {
-      if (currency.name.toLowerCase().contains(_enteredKeyword.toLowerCase()) || currency.code.toLowerCase().contains(_enteredKeyword.toLowerCase())) {
+      if (currency.name.toLowerCase().contains(enteredKeyword.toLowerCase()) || currency.code.toLowerCase().contains(enteredKeyword.toLowerCase())) {
       _searchList.add(currency);
       }
     }

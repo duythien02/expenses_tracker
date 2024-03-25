@@ -4,9 +4,8 @@ import 'package:expenses_tracker_app/models/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// ignore: must_be_immutable
 class WelcomScreen3 extends StatefulWidget {
-  WelcomScreen3({super.key, required this.currency});
+  const WelcomScreen3({super.key, required this.currency});
 
   final Currency currency;
 

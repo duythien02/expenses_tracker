@@ -75,7 +75,7 @@ class ExpenseCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Text('${calPercent().toStringAsFixed(0)}%',style: const TextStyle(color: Colors.black),),
+                    Text('${calPercent().toStringAsFixed(1)}%',style: const TextStyle(color: Colors.black),),
                     const SizedBox(width: 18,),
                     Text(moneyFormat(),
                         style: const TextStyle(color: Colors.black))

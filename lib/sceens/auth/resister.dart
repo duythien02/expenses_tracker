@@ -21,7 +21,6 @@ class _ResisterScreenState extends State<RegisterScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _passwordVisible = false;
     _reTypePasswordVisible = false;
@@ -51,7 +50,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
         });
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Email đã có người sử dụng'),
           ),
         );

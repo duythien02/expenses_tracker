@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Sai Email hoặc mật khẩu.'),
         ),
       );
@@ -44,7 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _passwordVisible = false;
   }
