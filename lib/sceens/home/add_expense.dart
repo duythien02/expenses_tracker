@@ -351,7 +351,6 @@ class _AddExpenseState extends State<AddExpense> {
                         ),
                         IconButton(
                             onPressed: () async {
-                              print(selectedDate);
                               final DateTime? dateTime = await showDatePicker(
                                 context: context,
                                 initialDate: selectedDate,

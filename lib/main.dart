@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
+
       supportedLocales: const [
         Locale('en','US'),
         Locale('vi','VN'),
@@ -46,6 +47,10 @@ class MyApp extends StatelessWidget {
                 fixedSize: const Size(250, 45),
                 disabledBackgroundColor:
                     const Color.fromARGB(124, 255, 177, 32)),
+          ),
+          datePickerTheme: DatePickerThemeData(
+            headerBackgroundColor: kColorScheme.primary,
+            headerForegroundColor: kColorScheme.background
           ),
           appBarTheme: const AppBarTheme().copyWith(
             backgroundColor: kColorScheme.primary,
