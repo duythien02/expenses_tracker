@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/sceens/home/add_expense.dart';
@@ -12,12 +13,30 @@ class HomePieChart extends StatelessWidget {
       required this.isExpense,
       required this.listAccount,
       required this.currentAccount,
-      required this.listExpense});
+      required this.listExpense,
+      required this.onPressedDate,
+      required this.onPressedMonth,
+      required this.onPressedYear,
+      required this.onPressedRange,
+      required this.onPressedAll,
+      required this.onPressedCustom,
+      required this.time,
+      required this.dateRange,
+      required this.typeTime});
   bool isExpense;
   final List<Account> listAccount;
   final Account currentAccount;
   final List<List<Expense>> listExpense;
-
+  final Function() onPressedDate;
+  final Function() onPressedMonth;
+  final Function() onPressedYear;
+  final Function() onPressedRange;
+  final Function() onPressedCustom;
+  final Function() onPressedAll;
+  final DateTime time;
+  final List<DateTime?> dateRange;
+  final String typeTime;
+  
   int getTotalExpense() {
     int total = 0;
     for (var list in listExpense) {
@@ -36,13 +55,27 @@ class HomePieChart extends StatelessWidget {
     return total;
   }
 
-    String moneyFormat(){
-    var format = NumberFormat.simpleCurrency(locale: currentAccount.currencyLocale);
+  String moneyFormat() {
+    var format = NumberFormat.simpleCurrency(
+        locale: currentAccount.currencyLocale);
     return format.format(getTotalExpense());
   }
 
   int getColor(List<Expense> list) {
     return list[0].color;
+  }
+
+  String formatDateRange(){
+    if(dateRange.isNotEmpty){
+      if(dateRange.elementAt(0)!.year != dateRange.last!.year){
+        return 'từ ${dateRange.elementAt(0)!.day} thg ${dateRange.elementAt(0)!.month}, ${dateRange.elementAt(0)!.year} đến ${dateRange.last!.day} thg ${dateRange.last!.month}, ${dateRange.last!.year}';
+      }
+      else{
+        return 'từ ${dateRange.elementAt(0)!.day} thg ${dateRange.elementAt(0)!.month} đến ${dateRange.last!.day} thg ${dateRange.last!.month}, ${dateRange.last!.year}';
+      }
+    }else{
+      return '';
+    }
   }
 
   @override
@@ -55,33 +88,132 @@ class HomePieChart extends StatelessWidget {
           width: MediaQuery.of(context).size.width - 30,
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    'Ngày',
-                    style: TextStyle(color: Colors.black),
+                  GestureDetector(
+                    onTap: () {
+                      onPressedAll();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: typeTime == 'all'
+                              ? Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: kColorScheme.primary))
+                              : const Border(bottom: BorderSide.none)),
+                      child: Text(
+                        'Mọi lúc',
+                        style: TextStyle(
+                            color: kColorScheme.primary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ),
-                  Text(
-                    'Tuần',
-                    style: TextStyle(color: Colors.black),
+                  GestureDetector(
+                    onTap: () {
+                      onPressedDate();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: typeTime == 'day'
+                              ? Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: kColorScheme.primary))
+                              : const Border(bottom: BorderSide.none)),
+                      child: Text(
+                        'Ngày',
+                        style: TextStyle(
+                            color: kColorScheme.primary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ),
-                  Text(
-                    'Tháng',
-                    style: TextStyle(color: Colors.black),
+                  GestureDetector(
+                    onTap: () {
+                      onPressedMonth();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: typeTime == 'month'
+                              ? Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: kColorScheme.primary))
+                              : const Border(bottom: BorderSide.none)),
+                      child: Text(
+                        'Tháng',
+                        style: TextStyle(
+                            color: kColorScheme.primary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ),
-                  Text(
-                    'Năm',
-                    style: TextStyle(color: Colors.black),
+                  GestureDetector(
+                    onTap: () {
+                      onPressedYear();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: typeTime == 'year'
+                              ? Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: kColorScheme.primary))
+                              : const Border(bottom: BorderSide.none)),
+                      child: Text(
+                        'Năm',
+                        style: TextStyle(
+                            color: kColorScheme.primary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async{
+                      onPressedRange();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: typeTime == 'range'
+                              ? Border(
+                                  bottom: BorderSide(
+                                      width: 2, color: kColorScheme.primary))
+                              : const Border(bottom: BorderSide.none)),
+                      child: Text(
+                        'Khoảng thời gian',
+                        style: TextStyle(
+                            color: kColorScheme.primary,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                '4 thg 3 - 10 thg 3',
-                style: TextStyle(color: Colors.black),
+              GestureDetector(
+                onTap: typeTime != 'all' ? onPressedCustom : null,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: typeTime != 'all'
+                        ? const Border(
+                            bottom: BorderSide(width: 1, color: Colors.black),
+                          )
+                        : const Border(bottom: BorderSide.none),
+                  ),
+                  child: Text(
+                    typeTime == 'day'
+                        ? 'Ngày ${time.day} tháng ${time.month}'
+                        : typeTime == 'month'
+                            ? 'Tháng ${time.month} năm ${time.year}'
+                            : typeTime == 'year'
+                                ? '${time.year}'
+                                : typeTime == 'all'
+                                    ? 'Mọi lúc'
+                                    : formatDateRange(),
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -94,10 +226,14 @@ class HomePieChart extends StatelessWidget {
                     width: MediaQuery.of(context).size.width - 300,
                     child: Center(
                       child: Text(
-                        listExpense.isNotEmpty 
+                        listExpense.isNotEmpty
                             ? moneyFormat()
-                            : isExpense ? 'Không có chi phí nào' : 'Không có thu nhập nào',
-                        style: const TextStyle(color: Colors.black, fontSize: 22), textAlign: TextAlign.center,
+                            : isExpense
+                                ? 'Không có chi phí nào'
+                                : 'Không có thu nhập nào',
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 22),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -113,7 +249,8 @@ class HomePieChart extends StatelessWidget {
                                     value: getTotalEachCategory(
                                         listExpense[index]),
                                     showTitle: false,
-                                    color: Color(getColor(listExpense[index]))),
+                                    color: Color(
+                                        getColor(listExpense[index]))),
                               )
                             : [
                                 PieChartSectionData(
