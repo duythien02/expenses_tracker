@@ -9,6 +9,7 @@ import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/home/expense_card_item.dart';
 import 'package:expenses_tracker_app/widgets/home/pie_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
@@ -31,8 +32,39 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isExpense = true;
   String typeTime = 'month';
-  DateTime timeNow = DateTime.utc(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+  DateTime timeNow = DateTime.utc(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day);
   List<DateTime?> dateRange = [];
+  bool isEmailVerified = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isEmailVerified = FirebaseAPI.user.emailVerified;
+    if (!isEmailVerified) {
+      //FirebaseAPI.user.sendEmailVerification();
+      SchedulerBinding.instance.addPostFrameCallback((_) => _showDialog());
+    }
+  }
+
+  _showDialog() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            content: SizedBox(
+              child: Text(
+                'Email của bạn chưa được xác nhận. Để xác nhận, vui lòng nhấp vào liên kết được gửi đến địa chỉ email bạn đã đăng ký',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        });
+  }
 
   void changeTime() async {
     switch (typeTime) {
@@ -141,11 +173,11 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           );
-          if(dateRange.isEmpty || dateRange.length == 1){
+          if (dateRange.isEmpty || dateRange.length == 1) {
             setState(() {
               typeTime = 'month';
             });
-          }else{
+          } else {
             setState(() {
               typeTime = 'range';
             });
@@ -177,7 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
             List<Expense> filteredList = [];
             newMap.forEach((key, value) {
               for (var expense in value) {
-                if (expense.date.day == timeNow.day && expense.date.month == timeNow.month && expense.date.year == timeNow.year) {
+                if (expense.date.day == timeNow.day &&
+                    expense.date.month == timeNow.month &&
+                    expense.date.year == timeNow.year) {
                   filteredList.add(expense);
                 }
               }
@@ -192,7 +226,11 @@ class _HomeScreenState extends State<HomeScreen> {
           {
             List<Expense> filteredList = [];
             newMap.forEach((key, value) {
-              filteredList = value.where((expense) => expense.date.month == timeNow.month && expense.date.year == timeNow.year).toList();
+              filteredList = value
+                  .where((expense) =>
+                      expense.date.month == timeNow.month &&
+                      expense.date.year == timeNow.year)
+                  .toList();
               if (filteredList.isNotEmpty) {
                 filteredMap[key] = filteredList;
                 filteredList = [];
@@ -204,7 +242,9 @@ class _HomeScreenState extends State<HomeScreen> {
           {
             List<Expense> filteredList = [];
             newMap.forEach((key, value) {
-              filteredList = value.where((expense) => expense.date.year == timeNow.year).toList();
+              filteredList = value
+                  .where((expense) => expense.date.year == timeNow.year)
+                  .toList();
               if (filteredList.isNotEmpty) {
                 filteredMap[key] = filteredList;
                 filteredList = [];
@@ -212,18 +252,21 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           }
           break;
-        case 'range':{
-          List<Expense> filteredList = [];
+        case 'range':
+          {
+            List<Expense> filteredList = [];
             newMap.forEach((key, value) {
-              filteredList = value.where((expense) => isInDateRange(expense.date, dateRange)).toList(); 
-              
+              filteredList = value
+                  .where((expense) => isInDateRange(expense.date, dateRange))
+                  .toList();
+
               if (filteredList.isNotEmpty) {
                 filteredMap[key] = filteredList;
                 filteredList = [];
               }
             });
-        }
-        break;
+          }
+          break;
       }
       return filteredMap;
     } else {
@@ -239,7 +282,8 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime startDate = dateRange[0]!;
     DateTime endDate = dateRange.length > 1 ? dateRange[1]! : startDate;
 
-    return expenseDate.isAfter(startDate.subtract(const Duration(days: 1))) && expenseDate.isBefore(endDate.add(const Duration(days: 1)));
+    return expenseDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+        expenseDate.isBefore(endDate.add(const Duration(days: 1)));
   }
 
   double getTotalAllExpense(Map<String, List<Expense>> expenseData) {
