@@ -17,6 +17,7 @@ class MainDrawer extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
+                Navigator.pop(context);
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ProfileScreen(user: user,)),(route) => route.isFirst);
               },
               child: UserAccountsDrawerHeader(
