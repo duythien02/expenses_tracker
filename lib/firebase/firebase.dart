@@ -85,7 +85,8 @@ class FirebaseAPI {
         .doc(user.uid)
         .collection('categories')
         .get();
-    return querySnapshot.docs.map((e) => Category.fromMap(e.data() as Map<String, dynamic>))
+    return querySnapshot.docs
+        .map((e) => Category.fromMap(e.data() as Map<String, dynamic>))
         .toList();
   }
 
@@ -112,8 +113,8 @@ class FirebaseAPI {
         .collection('expenses')
         .doc(newExpense.expenseId)
         .set(newExpense.toMap())
-        .whenComplete(() async =>
-            await calMoneyFromAccount(account, amount, isExpense));
+        .whenComplete(
+            () async => await calMoneyFromAccount(account, amount, isExpense));
   }
 
   static Future<void> calMoneyFromAccount(
@@ -153,13 +154,31 @@ class FirebaseAPI {
   static Stream<Map<dynamic, List<Expense>>> getGroupedExpensesStream(
       Account account) {
     List<Expense> listExpense = [];
-    Map<String,List<Expense>> groupedExpenses = {};
+    Map<String, List<Expense>> groupedExpenses = {};
     return getAllExpense(account).map((QuerySnapshot snapshot) {
-      for(DocumentSnapshot doc in snapshot.docs){
+      for (DocumentSnapshot doc in snapshot.docs) {
         listExpense.add(Expense.fromMap(doc.data() as Map<String, dynamic>));
         groupedExpenses = groupBy(listExpense, (expense) => expense.categoryId);
       }
       return groupedExpenses;
     });
+  }
+
+  static Future<void> createCategory(
+      String categoryName, int color, String symbol, bool type) async {
+    var uuid = const Uuid();
+    final category = Category(
+      categoryId: uuid.v4(),
+      categoryName: categoryName,
+      color: color,
+      symbol: symbol,
+      type: type ? Type.expense.name : Type.income.name ,
+    );
+    return await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('categories')
+        .doc(uuid.v4())
+        .set(category.toMap());
   }
 }
