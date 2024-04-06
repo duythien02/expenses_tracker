@@ -48,6 +48,7 @@ dependencies:
   intl: ^0.18.1
   month_picker_dialog: ^2.11.1
   calendar_date_picker2: ^0.5.5
+  flutter_colorpicker: ^1.0.3
 
 flutter_launcher_icons:
   android: "ic_launcher"
@@ -82,9 +83,9 @@ flutter:
     - assets/images/logo.png
     - assets/images/user_avatar.png
   fonts:
-    - family: AppIcons
+    - family: MyIcon
       fonts:
-        - asset: assets/fonts/MyIcons.ttf
+        - asset: assets/fonts/MyIcon.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

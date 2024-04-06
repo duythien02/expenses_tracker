@@ -1,7 +1,7 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/category.dart';
-import 'package:expenses_tracker_app/widgets/home/category_item.dart';
+import 'package:expenses_tracker_app/widgets/category/category_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -28,8 +28,12 @@ class _AddExpenseState extends State<AddExpense> {
   TextEditingController amount = TextEditingController();
   TextEditingController note = TextEditingController();
   final getCategory = FirebaseAPI.getAllCategories();
-  List<Category> subListCategory = [];
-  DateTime selectedDate = DateTime.utc(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
+  List<Category> listCateogories = [];
+  DateTime selectedDate = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
   bool isCategoryPicked = false;
   bool isSubmited = false;
 
@@ -45,7 +49,7 @@ class _AddExpenseState extends State<AddExpense> {
     if (note.text.isEmpty) {
       await FirebaseAPI.addExpense(
               int.parse(amount.text),
-              subListCategory.firstWhere((element) => element.picked == true),
+              listCateogories.firstWhere((element) => element.picked == true),
               selectedDate,
               null,
               widget.currentAccount,
@@ -54,7 +58,7 @@ class _AddExpenseState extends State<AddExpense> {
     } else {
       await FirebaseAPI.addExpense(
               int.parse(amount.text),
-              subListCategory.firstWhere((element) => element.picked == true),
+              listCateogories.firstWhere((element) => element.picked == true),
               selectedDate,
               note.text,
               widget.currentAccount,
@@ -63,8 +67,9 @@ class _AddExpenseState extends State<AddExpense> {
     }
   }
 
-  String moneyFormat(int number){
-    var format = NumberFormat.simpleCurrency(locale: widget.currentAccount.currencyLocale);
+  String moneyFormat(int number) {
+    var format = NumberFormat.simpleCurrency(
+        locale: widget.currentAccount.currencyLocale);
     return format.format(number);
   }
 
@@ -74,7 +79,6 @@ class _AddExpenseState extends State<AddExpense> {
       appBar: AppBar(
         title: const Text(
           'Thêm giao dịch',
-          style: TextStyle(color: Colors.white),
         ),
       ),
       body: Column(
@@ -181,7 +185,9 @@ class _AddExpenseState extends State<AddExpense> {
                                 FilteringTextInputFormatter.deny(RegExp('-')),
                               ],
                               validator: (value) {
-                                if (value == null || value.isEmpty || int.parse(value) == 0) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    int.parse(value) == 0) {
                                   return 'Số tiền không hợp lệ';
                                 }
                                 return null;
@@ -234,11 +240,17 @@ class _AddExpenseState extends State<AddExpense> {
                                           children: List.generate(
                                               widget.listAccount.length,
                                               (index) => RadioListTile(
-                                                    title: Text(widget
-                                                        .listAccount[index]
-                                                        .accountName, style: const TextStyle(fontWeight: FontWeight.w400),),
-                                                    subtitle: Text(
-                                                        moneyFormat(widget.listAccount[index].accountBalance)),
+                                                    title: Text(
+                                                      widget.listAccount[index]
+                                                          .accountName,
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                    subtitle: Text(moneyFormat(
+                                                        widget
+                                                            .listAccount[index]
+                                                            .accountBalance)),
                                                     value: widget
                                                         .listAccount[index],
                                                     groupValue:
@@ -279,11 +291,11 @@ class _AddExpenseState extends State<AddExpense> {
                         }
                         if (category.hasData) {
                           if (widget.isExpense) {
-                            subListCategory = (category.data!
+                            listCateogories = (category.data!
                                     .where((e) => e.type == Type.expense.name))
                                 .toList();
                           } else {
-                            subListCategory = (category.data!
+                            listCateogories = (category.data!
                                     .where((e) => e.type == Type.income.name))
                                 .toList();
                           }
@@ -294,32 +306,33 @@ class _AddExpenseState extends State<AddExpense> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 crossAxisCount: 4,
                                 children: List.generate(
-                                    subListCategory.length >= 7
+                                    listCateogories.length >= 7
                                         ? 8
-                                        : subListCategory.length + 1, (index) {
+                                        : listCateogories.length + 1, (index) {
                                   if ((index < 7 &&
-                                      index < subListCategory.length)) {
+                                      index < listCateogories.length)) {
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          if (subListCategory[index].picked ==
+                                          if (listCateogories[index].picked ==
                                               false) {
-                                            if (subListCategory.indexWhere(
+                                            if (listCateogories.indexWhere(
                                                     (e) => e.picked == true) >=
                                                 0) {
-                                              subListCategory[subListCategory
+                                              listCateogories[listCateogories
                                                       .indexWhere((e) =>
                                                           e.picked == true)]
                                                   .picked = false;
                                             }
                                             isCategoryPicked = true;
-                                            subListCategory[index].picked =
+                                            listCateogories[index].picked =
                                                 true;
                                           }
                                         });
                                       },
                                       child: CategoryItem(
-                                        category: subListCategory[index],
+                                        category: listCateogories[index],
+                                        isAddCategory: true,
                                       ),
                                     );
                                   } else {
@@ -327,6 +340,7 @@ class _AddExpenseState extends State<AddExpense> {
                                       onTap: () {},
                                       child: const CategoryItem(
                                         category: null,
+                                        isAddCategory: true,
                                       ),
                                     );
                                   }
@@ -362,7 +376,6 @@ class _AddExpenseState extends State<AddExpense> {
                                 setState(() {
                                   selectedDate = dateTime;
                                 });
-                                
                               }
                             },
                             icon: const Icon(Icons.date_range))
@@ -375,34 +388,37 @@ class _AddExpenseState extends State<AddExpense> {
                       'Ghi chú',
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
-                    SizedBox(
-                      width: 380,
-                      child: TextFormField(
-                        controller: note,
-                        maxLength: 4096,
-                        style: const TextStyle(fontSize: 18),
-                        decoration: const InputDecoration(
-                          errorStyle: TextStyle(fontSize: 14),
-                          hintText: "Ghi chú",
-                        ),
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.none,
+                    TextFormField(
+                      controller: note,
+                      maxLength: 4096,
+                      style: const TextStyle(fontSize: 18),
+                      decoration: const InputDecoration(
+                        errorStyle: TextStyle(fontSize: 14),
+                        hintText: "Ghi chú",
                       ),
+                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.none,
                     ),
                     Center(
                       child: ElevatedButton(
                         onPressed: isCategoryPicked
-                            ? isSubmited ? null : () {
-                                addExpense();
-                              }
+                            ? isSubmited
+                                ? null
+                                : addExpense
                             : null,
-                        child: !isSubmited ? const Text(
-                          'Thêm',
-                          style:  TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal),
-                        ) : const CircularProgressIndicator(),
+                        child: !isSubmited
+                            ? const Text(
+                                'Thêm',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal),
+                              )
+                            : const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(),
+                              ),
                       ),
                     ),
                   ],
