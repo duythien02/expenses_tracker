@@ -209,7 +209,11 @@ class _ResisterScreenState extends State<RegisterScreen> {
                         color: Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.normal),
-                  ) : const CircularProgressIndicator(),
+                  ) : const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(),
+                      ),
                 ),
               ],
             ),

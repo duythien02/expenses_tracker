@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _pass = TextEditingController();
 
+  bool isSubmited = false;
 
   late bool _passwordVisible;
 
@@ -26,12 +27,15 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     _formKey.currentState!.save();
+    setState(() {
+      isSubmited = true;
+    });
     try {
       await FirebaseAPI.firebaseAuth
-        .signInWithEmailAndPassword(
-          email: _email.text, password: _pass.text).then((value) {
-            Navigator.pop(context);
-          });
+          .signInWithEmailAndPassword(email: _email.text, password: _pass.text)
+          .then((value) {
+        Navigator.pop(context);
+      });
     } on FirebaseAuthException {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,16 +139,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40,
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    _submit();
-                  },
-                  child: const Text(
-                    'Đăng nhập',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal),
-                  ),
+                  onPressed: isSubmited ? null : _submit,
+                  child: !isSubmited
+                      ? const Text(
+                          'Đăng nhập',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal),
+                        )
+                      : const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(),
+                        ),
                 ),
               ],
             ),
