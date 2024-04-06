@@ -20,13 +20,30 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
 
   bool isSubmited = false;
 
+  void _submit() async {
+    if (formKey.currentState!.validate() == true) {
+      formKey.currentState!.save();
+      setState(() {
+        isSubmited = true;
+      });
+    }
+    await FirebaseAPI.completeRegistration(
+            'Chính',
+            int.parse(balance.text),
+            widget.currency.code,
+            widget.currency.name,
+            widget.currency.locale,
+            "0xe808",
+            4285132974)
+        .then((value) => Navigator.popUntil(context, (route) => route.isFirst));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnnotatedRegion(
-        value: SystemUiOverlayStyle.light.copyWith(
-          statusBarColor: Theme.of(context).primaryColor
-        ),
+        value: SystemUiOverlayStyle.light
+            .copyWith(statusBarColor: Theme.of(context).primaryColor),
         child: SafeArea(
           child: Container(
             margin: const EdgeInsets.only(top: 36),
@@ -47,7 +64,9 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                         fontWeight: FontWeight.w400),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 42,),
+                  const SizedBox(
+                    height: 42,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -65,37 +84,48 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             style: const TextStyle(fontSize: 20),
-                            decoration:InputDecoration(
+                            decoration: InputDecoration(
                               counterText: '',
                               filled: true,
                               fillColor: kColorScheme.background,
-                              hintStyle: const  TextStyle(color: Colors.grey),
-                              contentPadding: const EdgeInsets.symmetric(vertical:0, horizontal: 0),
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 0),
                             ),
                             validator: (value) {
-                              if(value == null || value.isEmpty) return 'Vui lòng nhập số dư';
+                              if (value == null || value.isEmpty){
+                                return 'Vui lòng nhập số dư';
+                              }
                               return null;
                             },
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8,),
-                      Expanded(child: Text(widget.currency.code, style: const TextStyle(color: Colors.black,fontSize: 20))),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Expanded(
+                          child: Text(widget.currency.code,
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20))),
                     ],
                   ),
                   const Spacer(),
-                  ElevatedButton (
-                    onPressed: isSubmited ? null : () async {
-                      if(formKey.currentState!.validate() == true){
-                        formKey.currentState!.save();
-                        setState(() {
-                          isSubmited = true;
-                        });
-                      }
-                      await FirebaseAPI.completeRegistration('Chính', int.parse(balance.text), widget.currency.code, widget.currency.name, widget.currency.locale, "0xe808", 4285132974)
-                      .then((value) => Navigator.popUntil(context ,(route) => route.isFirst));
-                    },
-                    child: !isSubmited ? const Text('Hoàn thành', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),) : const CircularProgressIndicator(),
+                  ElevatedButton(
+                    onPressed: isSubmited ? null : _submit,
+                    child: !isSubmited
+                        ? const Text(
+                            'Hoàn thành',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          )
+                        : const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(),
+                          ),
                   ),
                 ],
               ),
