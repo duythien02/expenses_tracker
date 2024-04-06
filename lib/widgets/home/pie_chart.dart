@@ -36,7 +36,7 @@ class HomePieChart extends StatelessWidget {
   final DateTime time;
   final List<DateTime?> dateRange;
   final String typeTime;
-  
+
   int getTotalExpense() {
     int total = 0;
     for (var list in listExpense) {
@@ -56,7 +56,7 @@ class HomePieChart extends StatelessWidget {
   }
 
   String moneyFormat() {
-    var format = NumberFormat.simpleCurrency(
+    var format = NumberFormat.compactSimpleCurrency(
         locale: currentAccount.currencyLocale);
     return format.format(getTotalExpense());
   }
@@ -65,15 +65,14 @@ class HomePieChart extends StatelessWidget {
     return list[0].color;
   }
 
-  String formatDateRange(){
-    if(dateRange.isNotEmpty){
-      if(dateRange.elementAt(0)!.year != dateRange.last!.year){
+  String formatDateRange() {
+    if (dateRange.isNotEmpty) {
+      if (dateRange.elementAt(0)!.year != dateRange.last!.year) {
         return 'từ ${dateRange.elementAt(0)!.day} thg ${dateRange.elementAt(0)!.month}, ${dateRange.elementAt(0)!.year} đến ${dateRange.last!.day} thg ${dateRange.last!.month}, ${dateRange.last!.year}';
-      }
-      else{
+      } else {
         return 'từ ${dateRange.elementAt(0)!.day} thg ${dateRange.elementAt(0)!.month} đến ${dateRange.last!.day} thg ${dateRange.last!.month}, ${dateRange.last!.year}';
       }
-    }else{
+    } else {
       return '';
     }
   }
@@ -168,7 +167,7 @@ class HomePieChart extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () async{
+                    onTap: () async {
                       onPressedRange();
                     },
                     child: Container(
@@ -222,22 +221,6 @@ class HomePieChart extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.width - 300,
-                    width: MediaQuery.of(context).size.width - 300,
-                    child: Center(
-                      child: Text(
-                        listExpense.isNotEmpty
-                            ? moneyFormat()
-                            : isExpense
-                                ? 'Không có chi phí nào'
-                                : 'Không có thu nhập nào',
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 22),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
                     height: MediaQuery.of(context).size.width - 170,
                     child: PieChart(
                       swapAnimationDuration: const Duration(milliseconds: 500),
@@ -249,8 +232,7 @@ class HomePieChart extends StatelessWidget {
                                     value: getTotalEachCategory(
                                         listExpense[index]),
                                     showTitle: false,
-                                    color: Color(
-                                        getColor(listExpense[index]))),
+                                    color: Color(getColor(listExpense[index]))),
                               )
                             : [
                                 PieChartSectionData(
@@ -258,6 +240,48 @@ class HomePieChart extends StatelessWidget {
                                     showTitle: false,
                                     color: Colors.grey),
                               ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: listExpense.isNotEmpty ? () {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            contentPadding: const EdgeInsets.all(16),
+                            content: SizedBox(
+                              child: Text(
+                                NumberFormat.simpleCurrency(
+                                  locale: currentAccount.currencyLocale,
+                                ).format(
+                                  getTotalExpense(),
+                                ),
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } : null,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.width - 290,
+                      width: MediaQuery.of(context).size.width - 290,
+                      child: Center(
+                        child: Text(
+                          listExpense.isNotEmpty
+                              ? moneyFormat()
+                              : isExpense
+                                  ? 'Không có chi phí nào'
+                                  : 'Không có thu nhập nào',
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 22),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),

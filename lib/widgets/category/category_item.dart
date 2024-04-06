@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class CategoryItem extends StatelessWidget {
-  const CategoryItem({super.key, required this.category});
+  const CategoryItem({super.key, required this.category, required this.isAddCategory});
   final Category? category;
+  final bool isAddCategory;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.width / 4,
-      width: MediaQuery.of(context).size.width / 4,
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: category != null
               ? category!.picked
                   ? Color(category!.color)
-                  : Colors.white
-              : Colors.white
+                  : null
+              : null
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -28,11 +27,11 @@ class CategoryItem extends StatelessWidget {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
-                      category != null ? Color(category!.color) : Colors.grey),
+                      category != null ? Color(category!.color) : !isAddCategory ? Colors.orange : Colors.grey),
               child: Icon(
                 category != null
                     ? IconData(int.parse(category!.symbol),
-                        fontFamily: "AppIcons")
+                        fontFamily: "MyIcon")
                     : Icons.add,
                 size: MediaQuery.of(context).size.width / 11,
                 color: Colors.white,
@@ -40,9 +39,14 @@ class CategoryItem extends StatelessWidget {
           category != null
               ? Text(
                   category!.categoryName,
-                  style: TextStyle(color: category!.picked ? Colors.white : Colors.black),
+                  style: TextStyle(color: category!.picked ? Colors.white : Colors.black,),
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
                 )
-              : const Text(
+              : !isAddCategory ? const Text(
+                  'Tạo',
+                  style: TextStyle(color: Colors.black),
+                ) : const Text(
                   'Xem thêm',
                   style: TextStyle(color: Colors.black),
                 )

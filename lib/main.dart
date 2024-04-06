@@ -29,29 +29,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-
       supportedLocales: const [
-        Locale('en','US'),
-        Locale('vi','VN'),
+        Locale('en', 'US'),
+        Locale('vi', 'VN'),
       ],
       debugShowCheckedModeBanner: false,
       title: 'Expenses Tracker App',
       theme: ThemeData(
           colorScheme: kColorScheme,
           useMaterial3: true,
-          scaffoldBackgroundColor: Colors.white,
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
-                foregroundColor: const Color.fromRGBO(255, 177, 32, 1),
-                fixedSize: const Size(250, 45),
-                disabledBackgroundColor:
-                    const Color.fromARGB(124, 255, 177, 32)),
+              backgroundColor: const Color.fromRGBO(255, 177, 32, 1),
+              foregroundColor: const Color.fromRGBO(255, 177, 32, 1),
+              fixedSize: const Size(250, 45),
+              disabledBackgroundColor: const Color.fromARGB(131, 255, 177, 32),
+            ),
           ),
           datePickerTheme: DatePickerThemeData(
-            headerBackgroundColor: kColorScheme.primary,
-            headerForegroundColor: kColorScheme.background
-          ),
+              headerBackgroundColor: kColorScheme.primary,
+              headerForegroundColor: kColorScheme.background),
           appBarTheme: const AppBarTheme().copyWith(
             backgroundColor: kColorScheme.primary,
             foregroundColor: kColorScheme.onPrimary,
@@ -90,7 +87,8 @@ class MyApp extends StatelessWidget {
                         stream: FirebaseAPI.getGroupedExpensesStream(
                             currentAccount),
                         builder: (context, expense) {
-                          if (snapshot.connectionState ==ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const SyncDataScreen();
                           }
                           if (expense.hasData) {

@@ -59,7 +59,7 @@ class ExpenseCard extends StatelessWidget {
                           color: Color(listExpense[0].color)),
                       child: Icon(
                         IconData(int.parse(listExpense[0].symbol),
-                            fontFamily: "AppIcons"),
+                            fontFamily: "MyIcon"),
                         size: MediaQuery.of(context).size.width / 16,
                         color: Colors.white,
                       ),

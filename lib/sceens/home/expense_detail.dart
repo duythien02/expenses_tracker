@@ -44,7 +44,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                       shape: BoxShape.circle, color: Color(account.color)),
                   child: Icon(
                     IconData(int.parse(account.symbol),
-                        fontFamily: "AppIcons"),
+                        fontFamily: "MyIcon"),
                     size: MediaQuery.of(context).size.width / 16,
                     color: Colors.white,
                   ),
@@ -65,7 +65,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                       shape: BoxShape.circle, color: Color(expense.color)),
                   child: Icon(
                     IconData(int.parse(expense.symbol),
-                        fontFamily: "AppIcons"),
+                        fontFamily: "MyIcon"),
                     size: MediaQuery.of(context).size.width / 16,
                     color: Colors.white,
                   ),

@@ -1,6 +1,7 @@
+import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
-import 'package:expenses_tracker_app/widgets/home/expense_detail_group.dart';
+import 'package:expenses_tracker_app/widgets/home/expense/expense_detail_group.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sticky_headers/sticky_headers.dart';
@@ -66,7 +67,7 @@ class ExpenseScreen extends StatelessWidget {
             itemBuilder: (context, index) => StickyHeader(
                 header: Container(
                   width: double.infinity,
-                  color: Colors.white,
+                  color: kColorScheme.background,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: Text(
