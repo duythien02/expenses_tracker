@@ -1,6 +1,11 @@
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/user.dart';
+import 'package:expenses_tracker_app/sceens/drawer/account/user_account.dart';
+import 'package:expenses_tracker_app/sceens/drawer/chart/bar_chart.dart';
+import 'package:expenses_tracker_app/sceens/drawer/chat/chat.dart';
 import 'package:expenses_tracker_app/sceens/drawer/profile.dart';
+import 'package:expenses_tracker_app/sceens/drawer/category/user_categories.dart';
+import 'package:expenses_tracker_app/widgets/drawer/item_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,8 +41,9 @@ class MainDrawer extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.of(context).pop();
+                Navigator.popUntil(context, (route) => route.isFirst);
+                
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
@@ -49,6 +55,26 @@ class MainDrawer extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+            ItemDrawer(
+              destination: const UserCategory(isExpense: true),
+              icon: Icons.category,
+              title: 'Danh mục',
+            ),
+            ItemDrawer(
+              destination: const UserAccountScreen(),
+              icon: Icons.account_balance,
+              title: 'Tài khoản',
+            ),
+            ItemDrawer(
+              destination: const BarChartScreen(),
+              icon: Icons.bar_chart,
+              title: 'Biểu đồ',
+            ),
+            ItemDrawer(
+              destination: const ChatScreen(),
+              icon: Icons.message,
+              title: 'Chat',
             ),
             InkWell(
               onTap: () async {
