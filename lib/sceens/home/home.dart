@@ -6,7 +6,7 @@ import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
-import 'package:expenses_tracker_app/widgets/home/expense_card_item.dart';
+import 'package:expenses_tracker_app/widgets/home/expense/expense_card_item.dart';
 import 'package:expenses_tracker_app/widgets/home/pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     isEmailVerified = FirebaseAPI.user.emailVerified;
     if (!isEmailVerified) {
-      //FirebaseAPI.user.sendEmailVerification();
+      FirebaseAPI.user.sendEmailVerification();
       SchedulerBinding.instance.addPostFrameCallback((_) => _showDialog());
     }
   }
@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Map<String, List<Expense>> convertMap(String time) {
+  Map<String, List<Expense>> filteredExpense(String time) {
     Map<String, List<Expense>> newMap = {};
     if (isExpense) {
       widget.expenseData.forEach((key, value) {
@@ -359,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(IconData(int.parse(widget.currentAccount.symbol),
-                    fontFamily: "AppIcons")),
+                    fontFamily: "MyIcon")),
                 const SizedBox(
                   width: 5,
                 ),
@@ -398,11 +398,6 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: FutureBuilder(
         future: FirebaseAPI.getInfoUser(),
         builder: (context, user) {
-          if (user.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
           if (user.hasData) {
             return MainDrawer(
               user: user.data!,
@@ -484,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isExpense: isExpense,
                 listAccount: widget.listAccount,
                 currentAccount: widget.currentAccount,
-                listExpense: convertMap(typeTime).values.toList(),
+                listExpense: filteredExpense(typeTime).values.toList(),
                 onPressedDate: () {
                   if (typeTime != 'day') {
                     setState(() {
@@ -532,24 +527,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Expanded(
                 child: ListView.builder(
-                    itemCount: convertMap(typeTime).length,
+                    itemCount: filteredExpense(typeTime).length,
                     itemBuilder: (context, index) {
-                      var sortedKeys = convertMap(typeTime).keys.toList()
+                      var sortedKeys = filteredExpense(typeTime).keys.toList()
                         ..sort((a, b) {
                           double totalA =
-                              getTotalExpenseCard(convertMap(typeTime)[b]!);
+                              getTotalExpenseCard(filteredExpense(typeTime)[b]!);
                           double totalB =
-                              getTotalExpenseCard(convertMap(typeTime)[a]!);
+                              getTotalExpenseCard(filteredExpense(typeTime)[a]!);
                           return totalA.compareTo(totalB);
                         });
-                      Map<String, List<Expense>> sortedMap = {};
+                      Map<String, List<Expense>> sortedByTotal = {};
                       for (var key in sortedKeys) {
-                        sortedMap[key] = convertMap(typeTime)[key]!;
+                        sortedByTotal[key] = filteredExpense(typeTime)[key]!;
                       }
                       return ExpenseCard(
-                        listExpense: sortedMap.values.elementAt(index),
+                        listExpense: sortedByTotal.values.elementAt(index),
                         account: widget.currentAccount,
-                        total: getTotalAllExpense(sortedMap),
+                        total: getTotalAllExpense(sortedByTotal),
                       );
                     }),
               )
