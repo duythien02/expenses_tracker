@@ -1,3 +1,15 @@
+<a id="readme-top"></a>
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+<img src="./assets/images/logo.png" alt="Logo" width="200">
+
+<h3 align="center">Ứng dụng quản lý tài chính cá nhân</h3>
+
+  <p align="center">
+    This's a group assignment in Open source develop course taught by Ms. Le Thi Bich Hang
+  </p>
+</div>
 # expenses_tracker_app
 
 A new Flutter project.
