@@ -43,3 +43,27 @@ For this project you have to add two plugins:
 - [firebase_auth](https://pub.dev/packages/firebase_auth): For using Firebase Authentication service in Flutter.
 
 The latest version of both these plugins support *null safety*.
+
+## Usage
+
+If you want to try out the this sample app, first you have to create and configure a Firebase project:
+
+* Clone the project:
+  
+  ```bash
+  https://github.com/duythien02/expenses_tracker.git
+  ```
+
+* Create a new Firebase project from the [console](https://console.firebase.google.com/).
+
+* Configure the Firebase for each platform.
+
+* Run the app using the command:
+  
+  ```bash
+  cd flutterfire-samples
+  flutter run
+  ```
+## License
+
+Copyright (c) 2022 Souvik Biswas
