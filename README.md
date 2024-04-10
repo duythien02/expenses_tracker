@@ -1,4 +1,4 @@
-![](assets/iamges/logo.png)
+![](assets/images/logo.png)
 This is a graduation project that integrates **Firebase** and **Flutter** to build a personal financial management application
 
 Currently the repo contains:
