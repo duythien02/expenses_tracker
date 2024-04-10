@@ -1,5 +1,8 @@
-![logo](assets/images/logo.png)
-This is a graduation project that integrates **Firebase** and **Flutter** to build a personal financial management application
+<div align="center">
+<img src="./assets/images/logo.png" alt="Logo" width="200">
+</div>
+
+This is a graduation project that integrates Firebase and Flutter to build a personal financial management application
 
 Currently the repo contains:
 
