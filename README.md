@@ -4,13 +4,13 @@
 <div align="center">
 <img src="./assets/images/logo.png" alt="Logo" width="200">
 
-<h3 align="center">Ứng dụng quản lý tài chính cá nhân</h3>
+<h3 align="center">Ứng dụng quản lý tài chính chi tiêu cá nhân</h3>
 
   <p align="center">
-    This's a group assignment in Open source develop course taught by Ms. Le Thi Bich Hang
+    This is a graduation project.
   </p>
 </div>
-# expenses_tracker_app
+# expenses_tracking_app
 
 A new Flutter project.
 
