@@ -61,7 +61,7 @@ If you want to try out the this sample app, first you have to create and configu
 * Run the app using the command:
   
   ```bash
-  cd flutterfire-samples
+  cd expenses-tracker
   flutter run
   ```
 ## License
