@@ -60,4 +60,4 @@ If you want to try out the this sample app, first you have to create and configu
   ```
 ## License
 
-Copyright (c) 2022 Souvik Biswas
+Copyright (c) 2022 DuyThien
