@@ -11,3 +11,35 @@ Currently the repo contains:
 * Firebase Authentication (email & password)
 * Firebase Authentication (using Google Sign-In)
 * Cloud Firestore database (CRUD operations)
+
+## Contents
+
+Application Features:
+
+- [ ] **Authentication**
+  - [x] Email & password registration & login
+  - [x] Login using various providers (Google)*
+
+- [ ] **Database**
+  - [x] CRUD operations on Firebase Cloud Firestore
+  - [x] Using Realtime Database
+
+- [ ] **Backend Actions**
+  - [x] Cloud Functions
+  - [x] User Presence tracking
+  - [ ] Push notifications using Firebase Cloud Messaging (FCM)
+
+- [ ] **Machine Learning**
+  - [ ] Suggestions for reasonable spending proposals
+     
+- [ ] **Other utilities**
+  - [ ] Chat with AI
+  - [ ] Analyze expenses, income and display it as a chart
+## Plugins
+
+For this project you have to add two plugins:
+
+- [firebase_core](https://pub.dev/packages/firebase_core): Required for initializing Firebase and using any other Firebase plugins.
+- [firebase_auth](https://pub.dev/packages/firebase_auth): For using Firebase Authentication service in Flutter.
+
+The latest version of both these plugins support *null safety*.
