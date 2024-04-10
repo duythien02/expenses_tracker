@@ -6,6 +6,11 @@
 
 This is a graduation project that integrates Firebase and Flutter to build a personal financial management application
 
+## ⚠️ Prerequisites
+
+1. Install Flutter SDK
+2. Install Firebase CLI
+
 ## Contents
 
 Application Features:
