@@ -12,25 +12,25 @@ import 'package:intl/intl.dart';
 import '../../main.dart';
 
 // ignore: must_be_immutable
-class AddExpense extends StatefulWidget {
-  AddExpense(
+class AddExpenseScreen extends StatefulWidget {
+  AddExpenseScreen(
       {super.key,
       required this.isExpense,
-      required this.listAccount,
+      this.listAccount,
       required this.currentAccount,
       this.expense,
       required this.isUpdateExpense});
   bool isExpense;
-  final List<Account> listAccount;
+  final List<Account>? listAccount;
   Account currentAccount;
   final Expense? expense;
   final bool isUpdateExpense;
 
   @override
-  State<AddExpense> createState() => _AddExpenseState();
+  State<AddExpenseScreen> createState() => _AddExpenseState();
 }
 
-class _AddExpenseState extends State<AddExpense> {
+class _AddExpenseState extends State<AddExpenseScreen> {
   final formKey = GlobalKey<FormState>();
   TextEditingController amount = TextEditingController();
   TextEditingController note = TextEditingController();
@@ -45,37 +45,70 @@ class _AddExpenseState extends State<AddExpense> {
   bool isSubmited = false;
   Category? category;
 
+  @override
+  void initState() {
+    super.initState();
+    if(widget.expense != null){
+      getCategoryfromDB();
+      isCategoryPicked = true;
+      if (!currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode)) {
+        amount.text = widget.expense!.amount.toStringAsFixed(0);
+      }else{
+        amount.text = widget.expense!.amount.toStringAsFixed(2);
+      }
+      if(widget.expense!.note != null){
+        note.text = widget.expense!.note!;
+      }
+    }
+  }
+
+  Future<void> getCategoryfromDB() async{
+    await FirebaseAPI.getCategory(widget.expense!.categoryId).then((value) {
+      setState(() {
+        category = value;
+        category!.picked =  true;
+      });
+    });
+  }
+
   void addExpense() async {
     if ( formKey.currentState!.validate()) {
       formKey.currentState!.save();
       setState(() {
         isSubmited = true;
       });
-      if (note.text.isEmpty) {
+      bool isChangeTypeExpense = false;
+      if(widget.isUpdateExpense){
+        if(widget.expense!.type == true && widget.isExpense == false || widget.expense!.type == false && widget.isExpense == true){
+          isChangeTypeExpense = true;
+        }
+        await FirebaseAPI.updateExpense(
+          widget.expense!.expenseId,
+          double.parse(amount.text),
+          widget.expense!.amount,
+          listCategories.firstWhere((element) => element.picked == true),
+          selectedDate,
+          note.text.isEmpty ? null : note.text,
+          widget.currentAccount.accountId,
+          widget.isExpense,
+          isChangeTypeExpense
+        ).whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
+      }else{
         await FirebaseAPI.addExpense(
-                double.parse(amount.text),
-                listCategories.firstWhere((element) => element.picked == true),
-                selectedDate,
-                null,
-                widget.currentAccount.accountId,
-                widget.isExpense)
-            .whenComplete(() => Navigator.pop(context));
-      } else {
-        await FirebaseAPI.addExpense(
-                double.parse(amount.text),
-                listCategories.firstWhere((element) => element.picked == true),
-                selectedDate,
-                note.text,
-                widget.currentAccount.accountId,
-                widget.isExpense)
-            .whenComplete(() => Navigator.pop(context));
+          double.parse(amount.text),
+          listCategories.firstWhere((element) => element.picked == true),
+          selectedDate,
+          note.text.isEmpty ? null : note.text,
+          widget.currentAccount.accountId,
+          widget.isExpense
+        ).whenComplete(() => Navigator.pop(context));
       }
     }
   }
 
   String moneyFormat(double number) {
     var format = NumberFormat.simpleCurrency(
-        locale: widget.currentAccount.currencyLocale);
+        locale: widget.currentAccount.currencyLocale); 
     return format.format(number);
   }
 
@@ -83,8 +116,8 @@ class _AddExpenseState extends State<AddExpense> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Thêm giao dịch',
+        title: Text(
+          widget.isUpdateExpense ? 'Chỉnh sửa giao dịch' : 'Thêm giao dịch',
         ),
       ),
       body: Column(
@@ -179,12 +212,10 @@ class _AddExpenseState extends State<AddExpense> {
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 20),
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 counterText: '',
-                                filled: true,
-                                fillColor: kColorScheme.background,
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                contentPadding: const EdgeInsets.symmetric(
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.symmetric(
                                     vertical: 0, horizontal: 0),
                               ),
                               inputFormatters: [
@@ -214,7 +245,7 @@ class _AddExpenseState extends State<AddExpense> {
                         ),
                         Expanded(
                           child: Text(
-                            widget.listAccount[0].currencyCode,
+                            widget.currentAccount.currencyCode,
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 20),
                           ),
@@ -229,7 +260,7 @@ class _AddExpenseState extends State<AddExpense> {
                       height: 5,
                     ),
                     GestureDetector(
-                      onTap: () async {
+                      onTap: widget.isUpdateExpense ? null : () async {
                         await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -249,10 +280,10 @@ class _AddExpenseState extends State<AddExpense> {
                                       child: SingleChildScrollView(
                                         child: Column(
                                           children: List.generate(
-                                              widget.listAccount.length,
+                                              widget.listAccount!.length,
                                               (index) => RadioListTile(
                                                     title: Text(
-                                                      widget.listAccount[index]
+                                                      widget.listAccount![index]
                                                           .accountName,
                                                       style: const TextStyle(
                                                           fontWeight:
@@ -260,9 +291,9 @@ class _AddExpenseState extends State<AddExpense> {
                                                     ),
                                                     subtitle: Text(moneyFormat(
                                                         widget
-                                                            .listAccount[index]
+                                                            .listAccount![index]
                                                             .accountBalance)),
-                                                    value: widget.listAccount[index],
+                                                    value: widget.listAccount![index],
                                                     groupValue: widget.currentAccount,
                                                     onChanged: (value) {
                                                       Navigator.pop(context);
@@ -293,32 +324,37 @@ class _AddExpenseState extends State<AddExpense> {
                     ),
                     FutureBuilder(
                       future: getCategory,
-                      builder: (context, category) {
-                        if (category.connectionState ==
+                      builder: (context, categoryData) {
+                        if (categoryData.connectionState ==
                             ConnectionState.waiting) {
                           return Container(
                             height: MediaQuery.of(context).size.width / 2 - 15,
                           );
                         }
-                        if (category.hasData) {
-                        category.data!.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
-                          if (widget.isExpense) {
-                            listCategories = (category.data!
-                                    .where((e) => e.type == true))
+                        if (categoryData.hasData) {
+                        categoryData.data!.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
+                          listCategories = (categoryData.data!
+                                    .where((e) => e.type == widget.isExpense))
                                 .toList();
-                            if(this.category != null && this.category!.type == true && listCategories.indexOf(this.category!) > 6){
-                              listCategories.removeWhere((element) => element.categoryId == this.category!.categoryId);
-                              listCategories.insert(0, this.category!);
-                            }
-                          } else {
-                            listCategories = (category.data!
-                                    .where((e) => e.type == false))
-                                .toList();
-                            if(this.category != null && this.category!.type == false && listCategories.indexOf(this.category!) > 6){
-                              listCategories.removeWhere((element) => element.categoryId == this.category!.categoryId);
-                              listCategories.insert(0, this.category!);
-                            }
-                          }
+                              if(category != null){
+                                if (listCategories.contains(category) ) {
+                                  if(category!.type == widget.isExpense && listCategories.indexWhere((element) => element.categoryId == category!.categoryId) > 6){
+                                    listCategories.removeWhere((element) => element.categoryId == category!.categoryId);
+                                    listCategories.insert(0, category!);
+                                  }
+                                }else{
+                                  if(category!.type == widget.isExpense && listCategories.indexWhere((element) => element.categoryId == category!.categoryId) > 6){
+                                    listCategories.removeWhere((element) => element.categoryId == category!.categoryId);
+                                    listCategories.insert(0, category!);
+                                  }else{
+                                    if( listCategories.indexWhere((element) => element.categoryId == category!.categoryId) > -1){
+                                      int index = listCategories.indexWhere((element) => element.categoryId == category!.categoryId);
+                                      listCategories.removeWhere((element) => element.categoryId == category!.categoryId);
+                                      listCategories.insert(index, category!);
+                                    }
+                                  }
+                                }
+                              }
                           return Container(
                             margin: const EdgeInsets.only(top: 10),
                             height: MediaQuery.of(context).size.width / 2 - 15,
@@ -335,8 +371,8 @@ class _AddExpenseState extends State<AddExpense> {
                                       onTap: () {
                                         setState(() {
                                           if (listCategories[index].picked == false) {
-                                            if (listCategories.indexWhere((e) => e.picked == true) >=0) {
-                                              listCategories[listCategories.indexWhere((e) =>e.picked == true)].picked = false;
+                                            for(var category in listCategories){
+                                              category.picked = false;
                                             }
                                             isCategoryPicked = true;
                                             listCategories[index].picked = true;
@@ -351,10 +387,12 @@ class _AddExpenseState extends State<AddExpense> {
                                   } else {
                                     return GestureDetector(
                                       onTap: () async {
-                                        var category = await Navigator.push(context, MaterialPageRoute(builder: (context) => ExpandCategoryScreen(listCategories: listCategories, isExpense: widget.isExpense,)));
-                                        if(category != null){
-                                          if(category == true){
-                                              this.category = null;
+                                        // chuyển đến màn hình mở rộng danh mục
+                                        var categoryFromExpandCategoryScreen = await Navigator.push(context, MaterialPageRoute(builder: (context) => ExpandCategoryScreen(listCategories: listCategories, isExpense: widget.isExpense,)));
+                                        if(categoryFromExpandCategoryScreen != null){
+                                          if(categoryFromExpandCategoryScreen == true){
+                                            // tạo một category mới
+                                              category = null;
                                               getCategory = FirebaseAPI.getAllCategories();
                                               getCategory.then((value) {
                                                 value.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
@@ -370,8 +408,10 @@ class _AddExpenseState extends State<AddExpense> {
                                                 value[0].picked = true;
                                               });
                                           }else{
+                                            // chọn một category khác
                                             setState(() {
-                                              this.category = category;
+                                              category = categoryFromExpandCategoryScreen;
+                                              isCategoryPicked = true;
                                             });
                                           }
                                         }
@@ -445,9 +485,9 @@ class _AddExpenseState extends State<AddExpense> {
                                 : addExpense
                             : null,
                         child: !isSubmited
-                            ? const Text(
-                                'Thêm',
-                                style: TextStyle(
+                            ? Text(
+                                widget.isUpdateExpense ? 'Lưu' : 'Thêm',
+                                style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 18,
                                     fontWeight: FontWeight.normal),

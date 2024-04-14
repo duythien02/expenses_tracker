@@ -306,7 +306,7 @@ class HomePieChart extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AddExpense(
+                                    builder: (context) => AddExpenseScreen(
                                           isExpense: isExpense,
                                           listAccount: listAccount,
                                           currentAccount: currentAccount,

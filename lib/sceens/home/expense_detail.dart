@@ -1,7 +1,7 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
-import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
+import 'package:expenses_tracker_app/sceens/home/add_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -29,7 +29,7 @@ class ExpenseDetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+          IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddExpenseScreen(isExpense: expense.type, currentAccount: account, isUpdateExpense: true, expense: expense,))), icon: const Icon(Icons.edit))
         ],
       ),
       body: Padding(
@@ -97,13 +97,6 @@ class ExpenseDetailScreen extends StatelessWidget {
                 ],
               ) 
               : Container(),
-              const SizedBox(height: 20,),
-              GestureDetector(
-                onTap: () {
-                  //Push đến trang add expense với đối tượng expense được truyền vào
-                },
-                child: Text('SAO CHÉP',style: TextStyle(color: kColorScheme.primary),),
-              ),
               const SizedBox(height: 20,),
               GestureDetector(
                 onTap: () async {
