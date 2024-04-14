@@ -17,7 +17,3 @@ Widget searchBar(void Function(String value) filter) {
       ),
     );
 }
-
-Widget loading(){
-  return const Center(child: CircularProgressIndicator(),);
-}
