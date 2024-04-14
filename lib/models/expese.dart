@@ -1,10 +1,10 @@
 class Expense{
   late String expenseId;
   late String categoryId;
-  late int amount;
+  late double amount;
   late DateTime date;
   late String categoryName;
-  late String type;
+  late bool type;
   late String symbol;
   late int color;
   String? note;
@@ -25,10 +25,10 @@ class Expense{
     return Expense(
       expenseId: map['expenseId'] as String,
       categoryId: map['categoryId'] as String,
-      amount: map['amount'] as int,
+      amount: map['amount'] as double,
       date: DateTime.fromMicrosecondsSinceEpoch(map['date'] as int),
       categoryName: map['categoryName'] as String,
-      type: map['type'] as String,
+      type: map['type'] as bool,
       symbol: map['symbol'] as String,
       color: map['color'] as int,
       note: map['note'] as String?,

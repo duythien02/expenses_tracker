@@ -12,8 +12,8 @@ class ExpenseScreen extends StatelessWidget {
   final List<Expense> listExpense;
   final Account account;
 
-  int getTotalExpense() {
-    int total = 0;
+  double getTotalExpense() {
+    double total = 0;
     for (var expense in listExpense) {
       total += expense.amount;
     }

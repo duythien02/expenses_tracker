@@ -37,8 +37,8 @@ class HomePieChart extends StatelessWidget {
   final List<DateTime?> dateRange;
   final String typeTime;
 
-  int getTotalExpense() {
-    int total = 0;
+  double getTotalExpense() {
+    double total = 0;
     for (var list in listExpense) {
       for (var expense in list) {
         total += expense.amount;
@@ -56,9 +56,13 @@ class HomePieChart extends StatelessWidget {
   }
 
   String moneyFormat() {
-    var format = NumberFormat.compactSimpleCurrency(
-        locale: currentAccount.currencyLocale);
-    return format.format(getTotalExpense());
+    if (getTotalExpense() >= 1000000) {
+      var format = NumberFormat.compactSimpleCurrency(locale: currentAccount.currencyLocale);
+      return format.format(getTotalExpense());
+    } else {
+      var format = NumberFormat.simpleCurrency(locale: currentAccount.currencyLocale);
+      return format.format(getTotalExpense());
+    }
   }
 
   int getColor(List<Expense> list) {
@@ -243,31 +247,33 @@ class HomePieChart extends StatelessWidget {
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: listExpense.isNotEmpty ? () {
-                      showDialog(
-                        context: context,
-                        builder: (_) {
-                          return AlertDialog(
-                            contentPadding: const EdgeInsets.all(16),
-                            content: SizedBox(
-                              child: Text(
-                                NumberFormat.simpleCurrency(
-                                  locale: currentAccount.currencyLocale,
-                                ).format(
-                                  getTotalExpense(),
-                                ),
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w400),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    } : null,
+                  GestureDetector(
+                    onTap: listExpense.isNotEmpty
+                        ? () {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return AlertDialog(
+                                  contentPadding: const EdgeInsets.all(16),
+                                  content: SizedBox(
+                                    child: Text(
+                                      NumberFormat.simpleCurrency(
+                                        locale: currentAccount.currencyLocale,
+                                      ).format(
+                                        getTotalExpense(),
+                                      ),
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w400),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        : null,
                     child: SizedBox(
                       height: MediaQuery.of(context).size.width - 290,
                       width: MediaQuery.of(context).size.width - 290,
@@ -304,6 +310,7 @@ class HomePieChart extends StatelessWidget {
                                           isExpense: isExpense,
                                           listAccount: listAccount,
                                           currentAccount: currentAccount,
+                                          isUpdateExpense: false,
                                         )));
                           },
                           icon: const Icon(Icons.add)),

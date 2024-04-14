@@ -14,8 +14,8 @@ class ExpenseCard extends StatelessWidget {
   final Account account;
   final double total;
 
-  int getTotalExpense() {
-    int total = 0;
+  double getTotalExpense() {
+    double total = 0;
     for (var expense in listExpense) {
       total += expense.amount;
     }
@@ -27,8 +27,13 @@ class ExpenseCard extends StatelessWidget {
   }
 
   String moneyFormat(){
-    var format = NumberFormat.simpleCurrency(locale: account.currencyLocale);
-    return format.format(getTotalExpense());
+    if (getTotalExpense() >= 1000000) {
+      var format = NumberFormat.compactSimpleCurrency(locale: account.currencyLocale);
+      return format.format(getTotalExpense());
+    } else {
+      var format = NumberFormat.simpleCurrency(locale: account.currencyLocale);
+      return format.format(getTotalExpense());
+    }
   }
 
   @override
@@ -67,9 +72,14 @@ class ExpenseCard extends StatelessWidget {
                     const SizedBox(
                       width: 8,
                     ),
-                    Text(
-                      listExpense[0].categoryName,
-                      style: const TextStyle(color: Colors.black),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Text(
+                        listExpense[0].categoryName,
+                        style: const TextStyle(color: Colors.black),
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
+                      ),
                     ),
                   ],
                 ),
