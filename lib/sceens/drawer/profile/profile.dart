@@ -1,7 +1,10 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
+import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.user});
@@ -78,8 +81,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: const TextStyle(color: Colors.black),
                   )
                 : InkWell(
-                    onTap: () {
-                      showDialog(
+                    onTap: () async {
+                      await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
@@ -88,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             content: SizedBox(
                               width: MediaQuery.of(context).size.width / 2,
                               child: const Text(
-                                'Email chưa được xác minh, gửi lại email kèm link xác minh',
+                                'Email chưa được xác minh, gửi lại email kèm liên kết xác minh',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,),
@@ -99,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               TextButton(onPressed: () {
                                 FirebaseAPI.user.sendEmailVerification();
                                 Navigator.pop(context);
-                              }, child: const Text('Send Mail')),
+                              }, child: const Text('Gửi')),
                             ],
                           );
                         },
@@ -146,6 +149,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: const TextStyle(color: Colors.black),
             )
           ],
+        ),
+      ),
+      floatingActionButton: InkWell(
+        onTap: () async {
+          await showDialog(context: context, builder: (context) => AlertDialog(
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
+              TextButton(onPressed: () async {
+                await FirebaseAuth.instance.signOut().whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
+                await GoogleSignIn().signOut();
+              }, child: const Text('Thoát')),
+            ],
+            contentPadding: const EdgeInsets.all(32),
+            content: const Text('Bạn có muốn đăng xuất không?', style: TextStyle(color: Colors.black),),
+          ));
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Thoát', style: TextStyle(color: kColorScheme.primary),),
+              const SizedBox(width: 6,),
+              Icon(Icons.exit_to_app,color: kColorScheme.primary,)
+            ],
+          ),
         ),
       ),
     );
