@@ -1,7 +1,7 @@
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:expenses_tracker_app/sceens/drawer/account/user_account.dart';
-import 'package:expenses_tracker_app/sceens/drawer/chart/bar_chart.dart';
+import 'package:expenses_tracker_app/sceens/drawer/chart/chart.dart';
 import 'package:expenses_tracker_app/sceens/drawer/chat/chat.dart';
 import 'package:expenses_tracker_app/sceens/drawer/profile/profile.dart';
 import 'package:expenses_tracker_app/sceens/drawer/category/user_categories.dart';
@@ -66,7 +66,7 @@ class MainDrawer extends StatelessWidget {
               title: 'Tài khoản',
             ),
             ItemDrawer(
-              destination: const BarChartScreen(),
+              destination: const ChartScreen(),
               icon: Icons.bar_chart,
               title: 'Biểu đồ',
             ),

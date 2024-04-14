@@ -164,9 +164,9 @@ class FirebaseAPI {
 
   static Stream<Map<dynamic, List<Expense>>> getGroupedExpensesStream(
       Account account) {
-    List<Expense> listExpense = [];
-    Map<String, List<Expense>> groupedExpenses = {};
     return getAllExpense(account).map((QuerySnapshot snapshot) {
+      List<Expense> listExpense = [];
+      Map<String, List<Expense>> groupedExpenses = {};
       for (DocumentSnapshot doc in snapshot.docs) {
         listExpense.add(Expense.fromMap(doc.data() as Map<String, dynamic>));
         groupedExpenses = groupBy(listExpense, (expense) => expense.categoryId);
@@ -190,7 +190,7 @@ class FirebaseAPI {
         .collection('users')
         .doc(user.uid)
         .collection('categories')
-        .doc(uuid.v4())
+        .doc(category.categoryId)
         .set(category.toMap());
   }
 
@@ -206,7 +206,7 @@ class FirebaseAPI {
   static Future<void> updateActiveAccount(String accountId, bool isActive) async{
     return  await firestore
       .collection('users')
-      .doc(FirebaseAPI.user.uid)
+      .doc(user.uid)
       .collection('accounts')
       .doc(accountId)
       .update({'isActive': isActive});
@@ -214,11 +214,49 @@ class FirebaseAPI {
   static Future<void> deleteExpense(String expenseId, String accountId, bool isExpense, double amount) async{
     return await firestore
       .collection('users')
-      .doc(FirebaseAPI.user.uid)
+      .doc(user.uid)
       .collection('accounts')
       .doc(accountId)
       .collection('expenses')
       .doc(expenseId)
       .delete().whenComplete(() async => await calMoneyFromAccount(accountId, amount, isExpense, true));
+  }
+  static Future<Category> getCategory(String categoryId) async{
+    DocumentSnapshot doc = await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('categories')
+      .doc(categoryId)
+      .get();
+    Category category = Category.fromMap(doc.data() as Map<String, dynamic>);
+    return category;
+  }
+
+  static Future<void> updateExpense(String expenseId,double newAmount, double oldAmount, Category category, DateTime date,
+      String? note, String accountId, bool isExpense, bool expenseToIncome) async{
+    final newExpense = Expense(
+        expenseId: expenseId,
+        amount: newAmount,
+        date: date,
+        note: note,
+        type: category.type,
+        categoryId: category.categoryId,
+        categoryName: category.categoryName,
+        color: category.color,
+        symbol: category.symbol);
+    return await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('accounts')
+      .doc(accountId)
+      .collection('expenses')
+      .doc(expenseId)
+      .set(newExpense.toMap())
+      .whenComplete(() async => await calMoneyFromAccount(
+        accountId,
+        expenseToIncome 
+          ? newAmount + oldAmount 
+          : newAmount - oldAmount,
+        isExpense, false));
   }
 }
