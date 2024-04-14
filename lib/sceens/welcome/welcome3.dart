@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/data/curencies_data.dart';
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/currency.dart';
@@ -21,21 +22,24 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
   bool isSubmited = false;
 
   void _submit() async {
-    if (formKey.currentState!.validate() == true) {
-      formKey.currentState!.save();
-      setState(() {
-        isSubmited = true;
-      });
+    final isValidForm = formKey.currentState!.validate();
+    if (!isValidForm) {
+      return;
     }
+    formKey.currentState!.save();
+    setState(() {
+      isSubmited = true;
+    });
     await FirebaseAPI.completeRegistration(
-            'Chính',
-            int.parse(balance.text),
-            widget.currency.code,
-            widget.currency.name,
-            widget.currency.locale,
-            "0xe808",
-            4285132974)
-        .then((value) => Navigator.popUntil(context, (route) => route.isFirst));
+          'Chính',
+          double.parse(balance.text),
+          widget.currency.code,
+          widget.currency.name,
+          widget.currency.locale,
+          "0xe808",
+          4285132974)
+      .then((value) => Navigator.popUntil(context, (route) => route.isFirst));
+  
   }
 
   @override
@@ -92,11 +96,23 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 0, horizontal: 0),
                             ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(',')),
+                            ],
                             validator: (value) {
                               if (value == null || value.isEmpty){
                                 return 'Vui lòng nhập số dư';
+                              }else if(double.tryParse(value) == null ||  (value.contains('.') && value.split('.')[1].length > 2)){
+                                return 'Số dư không hợp lệ';
                               }
                               return null;
+                            },
+                            onSaved: (value){
+                              if(currenciesCodeHasDecimal.contains(widget.currency.code)){
+                                  balance.text = value!.trim();
+                                }else{
+                                  balance.text = value!.split('.')[0];
+                                }
                             },
                           ),
                         ),

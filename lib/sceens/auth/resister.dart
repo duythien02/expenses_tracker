@@ -48,12 +48,14 @@ class _ResisterScreenState extends State<RegisterScreen> {
         setState(() {
           isSubmited = false;
         });
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Email đã có người sử dụng'),
-          ),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Email đã có người sử dụng'),
+            ),
+          );
+        }
       }
     }
   }
@@ -203,17 +205,19 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 ),
                 ElevatedButton(
                   onPressed: isSubmited ? null : _submit,
-                  child: !isSubmited ? const Text(
-                    'Tiếp theo',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal),
-                  ) : const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(),
-                      ),
+                  child: !isSubmited
+                      ? const Text(
+                          'Tiếp theo',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal),
+                        )
+                      : const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(),
+                        ),
                 ),
               ],
             ),

@@ -31,7 +31,7 @@ class FirebaseAPI {
 
   static Future<void> completeRegistration(
       String name,
-      int balance,
+      double balance,
       String curCode,
       String curName,
       String curSymbol,
@@ -55,7 +55,9 @@ class FirebaseAPI {
         currencyLocale: curSymbol,
         symbol: symbol,
         color: color,
-        isMain: true);
+        isMain: true,
+        isActive: true,
+        createAt: DateTime.now());
     return await firestore
         .collection('users')
         .doc(user.uid)
@@ -90,8 +92,8 @@ class FirebaseAPI {
         .toList();
   }
 
-  static Future<void> addExpense(int amount, Category category, DateTime date,
-      String? note, Account account, bool isExpense) async {
+  static Future<void> addExpense(double amount, Category category, DateTime date,
+      String? note, String accountId, bool isExpense) async {
     var uuid = const Uuid();
 
     final newExpense = Expense(
@@ -109,34 +111,43 @@ class FirebaseAPI {
         .collection('users')
         .doc(user.uid)
         .collection('accounts')
-        .doc(account.accountId)
+        .doc(accountId)
         .collection('expenses')
         .doc(newExpense.expenseId)
         .set(newExpense.toMap())
         .whenComplete(
-            () async => await calMoneyFromAccount(account, amount, isExpense));
+            () async => await calMoneyFromAccount(accountId, amount, isExpense, false));
   }
 
   static Future<void> calMoneyFromAccount(
-      Account account, int amount, bool isExpense) async {
+      String accountId, double amount, bool isExpense, bool isDeleteExpense) async {
     DocumentSnapshot documentSnapshot = await firestore
         .collection('users')
         .doc(user.uid)
         .collection('accounts')
-        .doc(account.accountId)
+        .doc(accountId)
         .get();
-    int balance = documentSnapshot['accountBalance'];
-    if (isExpense) {
-      balance -= amount;
-    } else {
-      balance += amount;
+    double balance = documentSnapshot['accountBalance'];
+    if(isDeleteExpense){
+      if (isExpense) {
+        balance += amount;
+      } else {
+        balance -= amount;
+      }
+    }else{
+      if (isExpense) {
+        balance -= amount;
+      } else {
+        balance += amount;
+      }
     }
-
-    await firestore
+  
+    balance = double.parse(balance.toStringAsFixed(2));
+    return await firestore
         .collection('users')
         .doc(user.uid)
         .collection("accounts")
-        .doc(account.accountId)
+        .doc(accountId)
         .update({'accountBalance': balance});
   }
 
@@ -172,7 +183,8 @@ class FirebaseAPI {
       categoryName: categoryName,
       color: color,
       symbol: symbol,
-      type: type ? Type.expense.name : Type.income.name ,
+      type: type,
+      createAt: DateTime.now()
     );
     return await firestore
         .collection('users')
@@ -180,5 +192,33 @@ class FirebaseAPI {
         .collection('categories')
         .doc(uuid.v4())
         .set(category.toMap());
+  }
+
+  static Future<void> updateBalance(double newBalance, String accountId) async{
+    return await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('accounts')
+      .doc(accountId)
+      .update({"accountBalance": newBalance});
+  }
+
+  static Future<void> updateActiveAccount(String accountId, bool isActive) async{
+    return  await firestore
+      .collection('users')
+      .doc(FirebaseAPI.user.uid)
+      .collection('accounts')
+      .doc(accountId)
+      .update({'isActive': isActive});
+  }
+  static Future<void> deleteExpense(String expenseId, String accountId, bool isExpense, double amount) async{
+    return await firestore
+      .collection('users')
+      .doc(FirebaseAPI.user.uid)
+      .collection('accounts')
+      .doc(accountId)
+      .collection('expenses')
+      .doc(expenseId)
+      .delete().whenComplete(() async => await calMoneyFromAccount(accountId, amount, isExpense, true));
   }
 }

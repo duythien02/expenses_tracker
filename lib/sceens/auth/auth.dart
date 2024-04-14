@@ -13,7 +13,9 @@ class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
   _handleGoogleBtnClick(BuildContext context) {
+    showDialog(context: context, builder: (context) => const Center(child: CircularProgressIndicator(),));
     _signInWithGoogle().then((user) async {
+      Navigator.pop(context);
       if (user != null) {
         if(user.additionalUserInfo!.isNewUser){
           await FirebaseAPI.createNewUser(

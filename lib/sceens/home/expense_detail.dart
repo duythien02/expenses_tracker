@@ -1,3 +1,5 @@
+import 'package:expenses_tracker_app/firebase/firebase.dart';
+import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,12 @@ class ExpenseDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chi tiết giao dịch'),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        ),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 32,left: 16),
@@ -71,13 +79,59 @@ class ExpenseDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12,),
-                Text(expense.categoryName,style: const TextStyle(color: Colors.black)) 
+                Flexible(child: Text(expense.categoryName,style: const TextStyle(color: Colors.black))) 
               ],
             ),
             const SizedBox(height: 20,),
             Text('Ngày', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
             const SizedBox(height: 6,),
             Text(formatDate(),style: const TextStyle(color: Colors.black)),
+            expense.note != null 
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20,),
+                  Text('Ghi chú', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                  const SizedBox(height: 6,),
+                  Text(expense.note!,style: const TextStyle(color: Colors.black)),
+                ],
+              ) 
+              : Container(),
+              const SizedBox(height: 20,),
+              GestureDetector(
+                onTap: () {
+                  //Push đến trang add expense với đối tượng expense được truyền vào
+                },
+                child: Text('SAO CHÉP',style: TextStyle(color: kColorScheme.primary),),
+              ),
+              const SizedBox(height: 20,),
+              GestureDetector(
+                onTap: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        contentPadding: const EdgeInsets.all(20),
+                        actionsPadding: const EdgeInsets.only(right: 20),
+                        content: const Text(
+                          'Bạn có chắc chắn muốn xoá giao dịch không?',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,),
+                        ),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
+                          TextButton(onPressed: () async {
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                            await FirebaseAPI.deleteExpense(expense.expenseId, account.accountId, expense.type,expense.amount);
+                          }, child: const Text('Xoá')),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: const Text('XOÁ',style: TextStyle(color: Colors.red),),
+              )
           ],
         ),
       ),

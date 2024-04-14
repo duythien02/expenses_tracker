@@ -29,7 +29,6 @@ List<Currency> currencies = [
   Currency(name: 'Krone Đan Mạch', code: 'DKK', picked: false, locale: 'da_DK'),
   Currency(name: 'Złoty Ba Lan', code: 'PLN', picked: false, locale: 'pl_PL'),
   Currency(name: 'New Shekel Israel', code: 'ILS', picked: false, locale: 'he_IL'),
-  Currency(name: 'Bảng Ai Cập', code: 'EGP', picked: false, locale: 'ar_EG'),
   Currency(name: 'Peso Philippines', code: 'PHP', picked: false, locale: 'fil_PH'),
   Currency(name: 'Đô la Bahamas', code: 'BSD', picked: false, locale: 'en_BS'),
   Currency(name: 'Dinar Kuwait', code: 'KWD', picked: false, locale: 'ar_KW'),
@@ -40,3 +39,5 @@ List<Currency> currencies = [
   Currency(name: 'Đô la Caribbean Đông', code: 'XCD', picked: false, locale: 'en_XC'),
   Currency(name: 'Đô la Fiji', code: 'FJD', picked: false, locale: 'en_FJ'),
 ];
+
+List<String> currenciesCodeHasDecimal = ['USD','BND','FJD','EUR','GBP','CNY','AUD','THB','TWD','SGD','HKD','CAD','CHF','SEK','MXN','NOK','TRY','INR','RUB','BRL','ZAR','SAR','AED','IDR','DKK','PLN','ILS','PHP','BSD','KWD','BBD','JMD','XCD'];

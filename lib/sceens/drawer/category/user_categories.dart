@@ -116,50 +116,60 @@ class _UserCategoryState extends State<UserCategory> {
               if (category.hasData) {
                 if (isExpense) {
                   listCateogories = (category.data!
-                      .where((e) => e.type == Type.expense.name)).toList();
+                      .where((e) => e.type == true)).toList();
                 } else {
                   listCateogories = (category.data!
-                      .where((e) => e.type == Type.income.name)).toList();
+                      .where((e) => e.type == false)).toList();
                 }
+                listCateogories.sort((category1, category2) =>
+                    category2.createAt.compareTo(category1.createAt));
                 return Expanded(
-                  child: GridView.count(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.count(
                       physics: const NeverScrollableScrollPhysics(),
                       crossAxisCount: 4,
-                      children:
-                          List.generate(listCateogories.length + 1, (index) {
-                        if (index < listCateogories.length) {
-                          return GestureDetector(
-                            onTap: () {
-                              //go to edit category screen
-                            },
-                            child: CategoryItem(
-                              category: listCateogories[index],
-                              isAddCategory: false,
-                            ),
-                          );
-                        } else {
-                          return GestureDetector(
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddCategoryScreen(
-                                    isExpense: isExpense,
-                                    category: null,
+                      children: List.generate(
+                        listCateogories.length + 1,
+                        (index) {
+                          if (index < listCateogories.length) {
+                            return GestureDetector(
+                              onTap: () {
+                                //go to edit category screen
+                              },
+                              child: CategoryItem(
+                                category: listCateogories[index],
+                                isAddCategory: false,
+                              ),
+                            );
+                          } else {
+                            return GestureDetector(
+                              onTap: () async {
+                                var category = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateCategoryScreen(
+                                      isExpense: isExpense,
+                                      category: null,
+                                    ),
                                   ),
-                                ),
-                              );
-                              setState(() {
-                                getCategory = FirebaseAPI.getAllCategories();
-                              });
-                            },
-                            child: const CategoryItem(
-                              category: null,
-                              isAddCategory: false,
-                            ),
-                          );
-                        }
-                      })),
+                                );
+                                if (category != null) {
+                                  setState(() {
+                                    getCategory = FirebaseAPI.getAllCategories();
+                                  });
+                                }
+                              },
+                              child: const CategoryItem(
+                                category: null,
+                                isAddCategory: false,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                 );
               }
               return Container();

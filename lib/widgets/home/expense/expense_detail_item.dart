@@ -25,9 +25,9 @@ class ExpenseDetailItem extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       height: MediaQuery.of(context).size.width / 10,
@@ -44,23 +44,31 @@ class ExpenseDetailItem extends StatelessWidget {
                     const SizedBox(
                       width: 14,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          expense.categoryName,
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        expense.note != null
-                            ? Text(
-                                expense.note!,
-                                style: const TextStyle(color: Colors.black),
-                              )
-                            : Container()
-                      ],
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            expense.categoryName,
+                            style: const TextStyle(color: Colors.black),
+                            overflow: TextOverflow.fade,
+                            softWrap: false,
+                          ),
+                          expense.note != null
+                              ? Text(
+                                  expense.note!,
+                                  style: const TextStyle(color: Colors.black),
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
+                                )
+                              : Container()
+                        ],
+                      ),
                     ),
                   ],
                 ),
+                const Spacer(),
                 Text(
                   moneyFormat(),
                   style: const TextStyle(color: Colors.black),

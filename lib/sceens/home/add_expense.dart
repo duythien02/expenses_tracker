@@ -1,6 +1,9 @@
+import 'package:expenses_tracker_app/data/curencies_data.dart';
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/category.dart';
+import 'package:expenses_tracker_app/models/expese.dart';
+import 'package:expenses_tracker_app/sceens/drawer/category/expand_category.dart';
 import 'package:expenses_tracker_app/widgets/category/category_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,10 +17,14 @@ class AddExpense extends StatefulWidget {
       {super.key,
       required this.isExpense,
       required this.listAccount,
-      required this.currentAccount});
+      required this.currentAccount,
+      this.expense,
+      required this.isUpdateExpense});
   bool isExpense;
   final List<Account> listAccount;
   Account currentAccount;
+  final Expense? expense;
+  final bool isUpdateExpense;
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -27,8 +34,8 @@ class _AddExpenseState extends State<AddExpense> {
   final formKey = GlobalKey<FormState>();
   TextEditingController amount = TextEditingController();
   TextEditingController note = TextEditingController();
-  final getCategory = FirebaseAPI.getAllCategories();
-  List<Category> listCateogories = [];
+  var getCategory = FirebaseAPI.getAllCategories();
+  List<Category> listCategories = [];
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
     DateTime.now().month,
@@ -36,38 +43,37 @@ class _AddExpenseState extends State<AddExpense> {
   );
   bool isCategoryPicked = false;
   bool isSubmited = false;
+  Category? category;
 
   void addExpense() async {
-    final isValidForm = formKey.currentState!.validate();
-    if (!isValidForm) {
-      return;
-    }
-    formKey.currentState!.save();
-    setState(() {
-      isSubmited = true;
-    });
-    if (note.text.isEmpty) {
-      await FirebaseAPI.addExpense(
-              int.parse(amount.text),
-              listCateogories.firstWhere((element) => element.picked == true),
-              selectedDate,
-              null,
-              widget.currentAccount,
-              widget.isExpense)
-          .whenComplete(() => Navigator.pop(context));
-    } else {
-      await FirebaseAPI.addExpense(
-              int.parse(amount.text),
-              listCateogories.firstWhere((element) => element.picked == true),
-              selectedDate,
-              note.text,
-              widget.currentAccount,
-              widget.isExpense)
-          .whenComplete(() => Navigator.pop(context));
+    if ( formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      setState(() {
+        isSubmited = true;
+      });
+      if (note.text.isEmpty) {
+        await FirebaseAPI.addExpense(
+                double.parse(amount.text),
+                listCategories.firstWhere((element) => element.picked == true),
+                selectedDate,
+                null,
+                widget.currentAccount.accountId,
+                widget.isExpense)
+            .whenComplete(() => Navigator.pop(context));
+      } else {
+        await FirebaseAPI.addExpense(
+                double.parse(amount.text),
+                listCategories.firstWhere((element) => element.picked == true),
+                selectedDate,
+                note.text,
+                widget.currentAccount.accountId,
+                widget.isExpense)
+            .whenComplete(() => Navigator.pop(context));
+      }
     }
   }
 
-  String moneyFormat(int number) {
+  String moneyFormat(double number) {
     var format = NumberFormat.simpleCurrency(
         locale: widget.currentAccount.currencyLocale);
     return format.format(number);
@@ -183,17 +189,22 @@ class _AddExpenseState extends State<AddExpense> {
                               ),
                               inputFormatters: [
                                 FilteringTextInputFormatter.deny(RegExp('-')),
+                                FilteringTextInputFormatter.deny(RegExp(',')),
                               ],
                               validator: (value) {
-                                if (value == null ||
-                                    value.isEmpty ||
-                                    int.parse(value) == 0) {
+                                if (value == null || value.isEmpty){
+                                  return 'Vui lòng nhập số tiền';
+                                }else if(double.tryParse(value) == null || double.parse(value) == 0 || value.contains('.') && value.split('.')[1].length > 2){
                                   return 'Số tiền không hợp lệ';
                                 }
                                 return null;
                               },
                               onSaved: (value) {
-                                amount.text = value!.trim();
+                                if(currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode)){
+                                  amount.text = value!.trim();
+                                }else{
+                                  amount.text = value!.split('.')[0];
+                                }
                               },
                             ),
                           ),
@@ -251,13 +262,13 @@ class _AddExpenseState extends State<AddExpense> {
                                                         widget
                                                             .listAccount[index]
                                                             .accountBalance)),
-                                                    value: widget
-                                                        .listAccount[index],
-                                                    groupValue:
-                                                        widget.currentAccount,
+                                                    value: widget.listAccount[index],
+                                                    groupValue: widget.currentAccount,
                                                     onChanged: (value) {
-                                                      widget.currentAccount =
-                                                          value!;
+                                                      Navigator.pop(context);
+                                                      setState(() {
+                                                        widget.currentAccount = value!;
+                                                      });
                                                     },
                                                   )),
                                         ),
@@ -290,14 +301,23 @@ class _AddExpenseState extends State<AddExpense> {
                           );
                         }
                         if (category.hasData) {
+                        category.data!.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
                           if (widget.isExpense) {
-                            listCateogories = (category.data!
-                                    .where((e) => e.type == Type.expense.name))
+                            listCategories = (category.data!
+                                    .where((e) => e.type == true))
                                 .toList();
+                            if(this.category != null && this.category!.type == true && listCategories.indexOf(this.category!) > 6){
+                              listCategories.removeWhere((element) => element.categoryId == this.category!.categoryId);
+                              listCategories.insert(0, this.category!);
+                            }
                           } else {
-                            listCateogories = (category.data!
-                                    .where((e) => e.type == Type.income.name))
+                            listCategories = (category.data!
+                                    .where((e) => e.type == false))
                                 .toList();
+                            if(this.category != null && this.category!.type == false && listCategories.indexOf(this.category!) > 6){
+                              listCategories.removeWhere((element) => element.categoryId == this.category!.categoryId);
+                              listCategories.insert(0, this.category!);
+                            }
                           }
                           return Container(
                             margin: const EdgeInsets.only(top: 10),
@@ -306,38 +326,56 @@ class _AddExpenseState extends State<AddExpense> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 crossAxisCount: 4,
                                 children: List.generate(
-                                    listCateogories.length >= 7
+                                    listCategories.length >= 7
                                         ? 8
-                                        : listCateogories.length + 1, (index) {
+                                        : listCategories.length + 1, (index) {
                                   if ((index < 7 &&
-                                      index < listCateogories.length)) {
+                                      index < listCategories.length)) {
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          if (listCateogories[index].picked ==
-                                              false) {
-                                            if (listCateogories.indexWhere(
-                                                    (e) => e.picked == true) >=
-                                                0) {
-                                              listCateogories[listCateogories
-                                                      .indexWhere((e) =>
-                                                          e.picked == true)]
-                                                  .picked = false;
+                                          if (listCategories[index].picked == false) {
+                                            if (listCategories.indexWhere((e) => e.picked == true) >=0) {
+                                              listCategories[listCategories.indexWhere((e) =>e.picked == true)].picked = false;
                                             }
                                             isCategoryPicked = true;
-                                            listCateogories[index].picked =
-                                                true;
+                                            listCategories[index].picked = true;
                                           }
                                         });
                                       },
                                       child: CategoryItem(
-                                        category: listCateogories[index],
+                                        category: listCategories[index],
                                         isAddCategory: true,
                                       ),
                                     );
                                   } else {
                                     return GestureDetector(
-                                      onTap: () {},
+                                      onTap: () async {
+                                        var category = await Navigator.push(context, MaterialPageRoute(builder: (context) => ExpandCategoryScreen(listCategories: listCategories, isExpense: widget.isExpense,)));
+                                        if(category != null){
+                                          if(category == true){
+                                              this.category = null;
+                                              getCategory = FirebaseAPI.getAllCategories();
+                                              getCategory.then((value) {
+                                                value.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
+                                                if(value[0].type == true){
+                                                  setState(() {
+                                                    widget.isExpense = true;
+                                                  });
+                                                }else{
+                                                  setState(() {
+                                                    widget.isExpense = false;
+                                                  });
+                                                }
+                                                value[0].picked = true;
+                                              });
+                                          }else{
+                                            setState(() {
+                                              this.category = category;
+                                            });
+                                          }
+                                        }
+                                      },
                                       child: const CategoryItem(
                                         category: null,
                                         isAddCategory: true,
