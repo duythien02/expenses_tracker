@@ -10,17 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 // ignore: must_be_immutable
-class AddCategoryScreen extends StatefulWidget {
-  AddCategoryScreen(
-      {super.key, required this.isExpense, required this.category});
+class CreateCategoryScreen extends StatefulWidget {
+  CreateCategoryScreen({super.key, required this.isExpense, this.category});
   bool isExpense;
   Category? category;
 
   @override
-  State<AddCategoryScreen> createState() => _AddCategoryState();
+  State<CreateCategoryScreen> createState() => _CreateCategoryState();
 }
 
-class _AddCategoryState extends State<AddCategoryScreen> {
+class _CreateCategoryState extends State<CreateCategoryScreen> {
   List<CustomIcon> listIcon = [];
   CustomIcon? icon;
   Color colorPicker = kColorScheme.primary;
@@ -43,7 +42,7 @@ class _AddCategoryState extends State<AddCategoryScreen> {
             colorPicker.value,
             icon!.iconData.codePoint.toString(),
             widget.isExpense)
-        .whenComplete(() => Navigator.pop(context));
+        .whenComplete(() => Navigator.pop(context,isSubmited));
   }
 
   List<CustomIcon> getIcon() {
@@ -156,7 +155,7 @@ class _AddCategoryState extends State<AddCategoryScreen> {
                     key: formKey,
                     child: TextFormField(
                       controller: categoryName,
-                      maxLength: 100,
+                      maxLength: 50,
                       style: const TextStyle(fontSize: 18),
                       decoration: const InputDecoration(
                         errorStyle: TextStyle(fontSize: 14),
@@ -244,61 +243,60 @@ class _AddCategoryState extends State<AddCategoryScreen> {
             const SizedBox(
               height: 8,
             ),
-            SizedBox(
-              height: 380,
-              child: GridView.count(
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 4,
-                children: List.generate(
-                  listIcon.length + 1,
-                  (index) {
-                    if (index < listIcon.length) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (listIcon[index].picked == false) {
-                              if (listIcon
-                                      .indexWhere((e) => e.picked == true) >=
-                                  0) {
-                                listIcon[listIcon
-                                        .indexWhere((e) => e.picked == true)]
-                                    .picked = false;
-                              }
-                              listIcon[index].picked = true;
-                              icon = listIcon[index];
-                            }
-                          });
-                        },
-                        child: CustomIconItem(
-                          icon: listIcon[index],
-                          color: colorPicker,
-                        ),
-                      );
-                    } else {
-                      return GestureDetector(
-                        onTap: () async {
-                          icon = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => IconRepo(
-                                        color: colorPicker,
-                                      )));
-                          if (icon != null) {
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 380,
+                child: GridView.count(
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 4,
+                  children: List.generate(
+                    listIcon.length + 1,
+                    (index) {
+                      if (index < listIcon.length) {
+                        return GestureDetector(
+                          onTap: () {
                             setState(() {
-                              if (!listIcon.contains(icon)) {
-                                listIcon.removeLast();
-                                listIcon.insert(0, icon!);
+                              if (listIcon[index].picked == false) {
+                                if (listIcon.indexWhere((e) => e.picked == true) >= 0) {
+                                  listIcon[listIcon.indexWhere((e) => e.picked == true)].picked = false;
+                                }
+                                listIcon[index].picked = true;
+                                icon = listIcon[index];
                               }
                             });
-                          }
-                        },
-                        child: CustomIconItem(
-                          icon: null,
-                          color: colorPicker,
-                        ),
-                      );
-                    }
-                  },
+                          },
+                          child: CustomIconItem(
+                            icon: listIcon[index],
+                            color: colorPicker,
+                          ),
+                        );
+                      } else {
+                        return GestureDetector(
+                          onTap: () async {
+                            icon = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => IconRepo(
+                                          color: colorPicker,
+                                        )));
+                            if (icon != null) {
+                              setState(() {
+                                if (!listIcon.contains(icon)) {
+                                  listIcon.removeLast();
+                                  listIcon.insert(0, icon!);
+                                }
+                              });
+                            }
+                          },
+                          child: CustomIconItem(
+                            icon: null,
+                            color: colorPicker,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
@@ -389,7 +387,8 @@ class _AddCategoryState extends State<AddCategoryScreen> {
                             fontWeight: FontWeight.normal),
                       ),
               ),
-            )
+            ),
+            const SizedBox(height: 16,)
           ],
         ),
       ),
