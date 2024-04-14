@@ -37,12 +37,17 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pop(context);
       });
     } on FirebaseAuthException {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sai Email hoặc mật khẩu.'),
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sai Email hoặc mật khẩu.'),
+          ),
+        );
+        setState(() {
+          isSubmited = false;
+        });
+      }
     }
   }
 
