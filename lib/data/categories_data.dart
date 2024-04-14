@@ -7,64 +7,73 @@ List<Category> defaultCategories = [
   Category(
     categoryId: uuid.v4(),
     categoryName: "Sức khoẻ",
-    type: Type.expense.name,
+    type: true,
     symbol: "0xe800",
-    color: 4294198070
+    color: 4294198070,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Giải trí",
-    type: Type.expense.name,
+    type: true,
     symbol: "0xe802",
-    color: 4283215696
+    color: 4283215696,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Ăn uống",
-    type: Type.expense.name,
+    type: true,
     symbol: "0xe804",
-    color: 4294961979
+    color: 4294961979,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Mua sắm",
-    type: Type.expense.name,
+    type: true,
     symbol: "0xe803",
-    color: 4278238420
+    color: 4278238420,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Gia đình",
-    type: Type.expense.name,
+    type: true,
     symbol: "0xe805",
-    color: 4293467747
+    color: 4293467747,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Lương",
-    type: Type.income.name,
+    type: false,
     symbol: "0xe806",
-    color: 4283215696
+    color: 4283215696,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Quà Tặng",
-    type: Type.income.name,
+    type: false,
     symbol: "0xe807",
-    color: 4294198070
+    color: 4294198070,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Đầu tư",
-    type: Type.income.name,
+    type: false,
     symbol: "0xe809",
-    color: 4278238420
+    color: 4278238420,
+    createAt: DateTime.now()
   ),
   Category(
     categoryId: uuid.v4(),
     categoryName: "Kinh doanh",
-    type: Type.income.name,
+    type: false,
     symbol: "0xe80a",
-    color: 4293467747
+    color: 4293467747,
+    createAt: DateTime.now()
   ),
 ];
