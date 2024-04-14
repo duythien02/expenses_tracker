@@ -1,17 +1,18 @@
 // ignore: library_prefixes
 import 'package:calendar_date_picker2/calendar_date_picker2.dart' as rangePicker;
+import 'package:expenses_tracker_app/data/curencies_data.dart';
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
-import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/home/expense/expense_card_item.dart';
 import 'package:expenses_tracker_app/widgets/home/pie_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
@@ -32,38 +33,48 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isExpense = true;
   String typeTime = 'month';
-  DateTime timeNow = DateTime.utc(
-      DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime timeNow = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   List<DateTime?> dateRange = [];
   bool isEmailVerified = false;
-
+  TextEditingController balance = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
+    FirebaseAPI.user.reload();
     isEmailVerified = FirebaseAPI.user.emailVerified;
     if (!isEmailVerified) {
-      FirebaseAPI.user.sendEmailVerification();
-      SchedulerBinding.instance.addPostFrameCallback((_) => _showDialog());
+      _sendVerifyEmailAndShowDialog();
     }
   }
 
-  _showDialog() async {
+  _sendVerifyEmailAndShowDialog() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastLogin = prefs.getString("lastLogin");
+    if(lastLogin == null){
+      prefs.setString('lastLogin', DateTime.now().toString());
+    }
+    else if(DateTime.now().difference(DateTime.parse(lastLogin)).inDays >= 1 && context.mounted){
+    FirebaseAPI.user.sendEmailVerification();
+    prefs.setString('lastLogin', DateTime.now().toString());
     return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: SizedBox(
-              child: Text(
-                'Email của bạn chưa được xác nhận. Để xác nhận, vui lòng nhấp vào liên kết được gửi đến địa chỉ email bạn đã đăng ký',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.center,
-              ),
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: SizedBox(
+            child: Text(
+              'Email của bạn chưa được xác nhận. Để xác nhận, vui lòng nhấp vào liên kết được gửi đến địa chỉ email bạn đã đăng ký',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
+    }
   }
 
   void changeTime() async {
@@ -190,13 +201,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Map<String, List<Expense>> newMap = {};
     if (isExpense) {
       widget.expenseData.forEach((key, value) {
-        if (value.any((element) => element.type == Type.expense.name)) {
+        if (value.any((element) => element.type == true)) {
           newMap[key] = value;
         }
       });
     } else {
       widget.expenseData.forEach((key, value) {
-        if (value.any((element) => element.type == Type.income.name)) {
+        if (value.any((element) => element.type == false)) {
           newMap[key] = value;
         }
       });
@@ -286,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
         expenseDate.isBefore(endDate.add(const Duration(days: 1)));
   }
 
-  double getTotalAllExpense(Map<String, List<Expense>> expenseData) {
+  double getTotalCostsAllExpense(Map<String, List<Expense>> expenseData) {
     double total = 0;
     for (var element in expenseData.values) {
       for (var expense in element) {
@@ -296,13 +307,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return total;
   }
 
-  String moneyFormat(int number) {
+  String moneyFormat(double number) {
     var format = NumberFormat.simpleCurrency(
         locale: widget.currentAccount.currencyLocale);
     return format.format(number);
   }
 
-  double getTotalExpenseCard(List<Expense> expenses) {
+  double getTotalCostsExpenseCard(List<Expense> expenses) {
     return expenses.map((expense) => expense.amount).fold(0, (a, b) => a + b);
   }
 
@@ -317,43 +328,46 @@ class _HomeScreenState extends State<HomeScreen> {
               await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Huỷ'))
-                        ],
-                        title: const Text('Chọn tài khoản'),
-                        contentPadding: const EdgeInsets.all(10),
-                        content: IntrinsicHeight(
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.width / 2,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: List.generate(
-                                    widget.listAccount.length,
-                                    (index) => RadioListTile(
-                                          title: Text(
-                                            widget
-                                                .listAccount[index].accountName,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                          subtitle: Text(moneyFormat(widget
-                                              .listAccount[index]
-                                              .accountBalance)),
-                                          value: widget.listAccount[index],
-                                          groupValue: widget.currentAccount,
-                                          onChanged: (value) {
-                                            widget.currentAccount = value!;
-                                          },
-                                        )),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Huỷ'))
+                    ],
+                    title: const Text('Chọn tài khoản'),
+                    contentPadding: const EdgeInsets.all(10),
+                    content: IntrinsicHeight(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.width / 2,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: List.generate(
+                                widget.listAccount.length,
+                                (index) => RadioListTile(
+                                  title: Text(
+                                    widget
+                                        .listAccount[index].accountName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  subtitle: Text(moneyFormat(widget.listAccount[index].accountBalance)),
+                                  value: widget.listAccount[index],
+                                  groupValue: widget.currentAccount,
+                                  onChanged: (value) async {
+                                    Navigator.pop(context);
+                                    await FirebaseAPI.updateActiveAccount(widget.currentAccount.accountId, false);
+                                    await FirebaseAPI.updateActiveAccount(value!.accountId, true);
+                                    widget.currentAccount = value;
+                                  },
+                                ),
                               ),
-                            ),
                           ),
                         ),
-                      ));
+                      ),
+                    ),
+                  ),
+                );
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -375,23 +389,105 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           InkWell(
+              onTap: () async {
+                if (!currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode)) {
+                  balance.text = widget.currentAccount.accountBalance.toStringAsFixed(0);
+                }else{
+                  balance.text = widget.currentAccount.accountBalance.toStringAsFixed(2);
+                }
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white,
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('HUỶ'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+                            Navigator.pop(context);
+                            await FirebaseAPI.updateBalance(double.parse(balance.text), widget.currentAccount.accountId);
+                          }
+                        },
+                        child: const Text('CHỈNH SỬA'),
+                      )
+                    ],
+                    title: const Text('Chỉnh sửa số dư'),
+                    contentPadding: const EdgeInsets.all(10),
+                    content: Form(
+                      key: formKey,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            width: 120,
+                            height: 70,
+                            child: TextFormField(
+                              controller: balance,
+                              maxLength: 15,
+                              autofocus: true,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 20),
+                              decoration: const InputDecoration(
+                                counterText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 0),
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(RegExp(',')),
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Vui lòng nhập số tiền';
+                                } else if (double.tryParse(value) == null || (value.contains('.') && value.split('.')[1].length > 2)) {
+                                  return 'Số tiền không hợp lệ';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                if (currenciesCodeHasDecimal.contains(
+                                    widget.currentAccount.currencyCode)) {
+                                  balance.text = value!.trim();
+                                } else {
+                                  balance.text = value!.split('.')[0];
+                                }
+                              },
+                            ),
+                          ),
+                          Text(widget.currentAccount.currencyCode,
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20))
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
               child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                moneyFormat(widget.currentAccount.accountBalance),
-                style: const TextStyle(color: Colors.white, fontSize: 22),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 20,
-              )
-            ],
-          ))
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    moneyFormat(widget.currentAccount.accountBalance),
+                    style: TextStyle(color: widget.currentAccount.accountBalance >= 0 ? Colors.white : Colors.red, fontSize: 22),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                    size: 20,
+                  )
+                ],
+              ))
         ]),
         centerTitle: true,
       ),
@@ -531,10 +627,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       var sortedKeys = filteredExpense(typeTime).keys.toList()
                         ..sort((a, b) {
-                          double totalA =
-                              getTotalExpenseCard(filteredExpense(typeTime)[b]!);
-                          double totalB =
-                              getTotalExpenseCard(filteredExpense(typeTime)[a]!);
+                          double totalA = getTotalCostsExpenseCard(
+                              filteredExpense(typeTime)[b]!);
+                          double totalB = getTotalCostsExpenseCard(
+                              filteredExpense(typeTime)[a]!);
                           return totalA.compareTo(totalB);
                         });
                       Map<String, List<Expense>> sortedByTotal = {};
@@ -544,7 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return ExpenseCard(
                         listExpense: sortedByTotal.values.elementAt(index),
                         account: widget.currentAccount,
-                        total: getTotalAllExpense(sortedByTotal),
+                        total: getTotalCostsAllExpense(sortedByTotal),
                       );
                     }),
               )
