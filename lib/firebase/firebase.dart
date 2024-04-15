@@ -259,4 +259,21 @@ class FirebaseAPI {
           : newAmount - oldAmount,
         isExpense, false));
   }
+
+  static Future<void> editCategory(String categoryId, String categoryName, int color, String symbol, bool type, DateTime createAt) async {
+    final category = Category(
+      categoryId: categoryId,
+      categoryName: categoryName,
+      color: color,
+      symbol: symbol,
+      type: type,
+      createAt: createAt
+    );
+    return await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('categories')
+        .doc(categoryId)
+        .set(category.toMap());
+  }
 }

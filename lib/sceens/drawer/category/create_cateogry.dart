@@ -4,6 +4,7 @@ import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/models/custom_icon.dart';
+import 'package:expenses_tracker_app/models/my_color_picker.dart';
 import 'package:expenses_tracker_app/sceens/drawer/category/icon_repository.dart';
 import 'package:expenses_tracker_app/widgets/category/custom_icon.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class CreateCategoryScreen extends StatefulWidget {
 
 class _CreateCategoryState extends State<CreateCategoryScreen> {
   List<CustomIcon> listIcon = [];
+  List<MyColorPicker> listColors = [];
   CustomIcon? icon;
   Color colorPicker = kColorScheme.primary;
   late Color tempColor;
@@ -37,12 +39,23 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
     setState(() {
       isSubmited = true;
     });
-    return await FirebaseAPI.createCategory(
+    if (widget.category != null) {
+      return await FirebaseAPI.editCategory(
+            widget.category!.categoryId,
+            categoryName.text,
+            colorPicker.value,
+            icon!.iconData.codePoint.toString(),
+            widget.isExpense,
+            widget.category!.createAt)
+        .whenComplete(() => Navigator.pop(context,widget.isExpense));
+    }else{
+      return await FirebaseAPI.createCategory(
             categoryName.text,
             colorPicker.value,
             icon!.iconData.codePoint.toString(),
             widget.isExpense)
-        .whenComplete(() => Navigator.pop(context,isSubmited));
+        .whenComplete(() => Navigator.pop(context,widget.isExpense));
+    }
   }
 
   List<CustomIcon> getIcon() {
@@ -107,13 +120,33 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
   void initState() {
     super.initState();
     listIcon = getIcon();
+    listColors = colors.sublist(0,colors.length);
     customIcon.forEach((key, value) {
       for (var icon in value) {
         icon.picked = false;
       }
     });
-    for (var color in colors) {
+    for (var color in listColors) {
       color.isSelected = false;
+    }
+    if(widget.category != null){
+      icon = CustomIcon(iconData: IconData(int.parse(widget.category!.symbol),fontFamily: "MyIcon"),picked: true);
+      colorPicker = Color(widget.category!.color);
+      widget.isExpense = widget.category!.type;
+      MyColorPicker categoryColor = MyColorPicker(color: colorPicker,isSelected: true);
+      if(listColors.indexWhere((element) => element.color.value == categoryColor.color.value) > - 1){
+        listColors[listColors.indexWhere((element) => element.color.value == categoryColor.color.value)].isSelected = true;
+      }else{
+        listColors.insert(0, categoryColor);
+        listColors.removeLast();
+      }
+      if(listIcon.indexWhere((element) => element.iconData.codePoint == icon!.iconData.codePoint) > - 1){
+        listIcon[listIcon.indexWhere((element) => element.iconData.codePoint == icon!.iconData.codePoint)].picked = true;
+      }else{
+        listIcon.insert(0, icon!);
+        listIcon.removeLast();
+      }
+      categoryName.text = widget.category!.categoryName;
     }
   }
 
@@ -121,7 +154,7 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tạo danh mục'),
+        title: Text(widget.category != null ? 'Chỉnh sửa danh mục' : 'Tạo danh mục'),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
@@ -258,8 +291,8 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                           onTap: () {
                             setState(() {
                               if (listIcon[index].picked == false) {
-                                if (listIcon.indexWhere((e) => e.picked == true) >= 0) {
-                                  listIcon[listIcon.indexWhere((e) => e.picked == true)].picked = false;
+                                for(var icon in listIcon){
+                                  icon.picked = false;
                                 }
                                 listIcon[index].picked = true;
                                 icon = listIcon[index];
@@ -274,15 +307,13 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                       } else {
                         return GestureDetector(
                           onTap: () async {
-                            icon = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => IconRepo(
-                                          color: colorPicker,
-                                        )));
+                            icon = await Navigator.push(context,MaterialPageRoute(builder: (context) => IconRepo(color: colorPicker,)));
                             if (icon != null) {
                               setState(() {
                                 if (!listIcon.contains(icon)) {
+                                  for(var icon in listIcon){
+                                    icon.picked = false;
+                                  }
                                   listIcon.removeLast();
                                   listIcon.insert(0, icon!);
                                 }
@@ -319,25 +350,20 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                     if (index < 7) {
                       return GestureDetector(
                         onTap: () {
-                          if (colors.indexWhere(
-                                  (element) => element.isSelected == true) >=
-                              0) {
-                            colors
-                                .elementAt(colors.indexWhere(
-                                    (element) => element.isSelected == true))
-                                .isSelected = false;
+                          for(var color in listColors){
+                            color.isSelected = false;
                           }
                           setState(() {
-                            colorPicker = colors[index].color;
-                            colors[index].isSelected = true;
+                            colorPicker = listColors[index].color;
+                            listColors[index].isSelected = true;
                           });
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(right: 6),
                           child: CircleAvatar(
                             radius: 20,
-                            backgroundColor: colors[index].color,
-                            child: colors[index].isSelected
+                            backgroundColor: listColors[index].color,
+                            child: listColors[index].isSelected
                                 ? const Icon(Icons.check, color: Colors.white)
                                 : null,
                           ),
@@ -379,9 +405,9 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                         height: 22,
                         child: CircularProgressIndicator(),
                       )
-                    : const Text(
-                        'Thêm',
-                        style: TextStyle(
+                    : Text(
+                        widget.category != null ? 'Lưu' : 'Thêm',
+                        style: const TextStyle(
                             color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.normal),

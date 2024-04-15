@@ -6,15 +6,14 @@ import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/category/category_item.dart';
 import 'package:flutter/material.dart';
 
-class UserCategory extends StatefulWidget {
-  const UserCategory({super.key, required this.isExpense});
-  final bool isExpense;
+class UserCategoryScreen extends StatefulWidget {
+  const UserCategoryScreen({super.key});
 
   @override
-  State<UserCategory> createState() => _UserCategoryState();
+  State<UserCategoryScreen> createState() => _UserCategoryScreenState();
 }
 
-class _UserCategoryState extends State<UserCategory> {
+class _UserCategoryScreenState extends State<UserCategoryScreen> {
   bool isExpense = true;
   var getCategory = FirebaseAPI.getAllCategories();
   List<Category> listCateogories = [];
@@ -134,8 +133,14 @@ class _UserCategoryState extends State<UserCategory> {
                         (index) {
                           if (index < listCateogories.length) {
                             return GestureDetector(
-                              onTap: () {
-                                //go to edit category screen
+                              onTap: () async {
+                                var category = await Navigator.push(context, MaterialPageRoute(builder: (context) => CreateCategoryScreen(isExpense: isExpense,category: listCateogories[index],)));
+                                if (category != null) {
+                                  setState(() {
+                                    getCategory = FirebaseAPI.getAllCategories();
+                                    isExpense = category;
+                                  });
+                                }
                               },
                               child: CategoryItem(
                                 category: listCateogories[index],

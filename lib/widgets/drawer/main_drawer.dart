@@ -56,7 +56,7 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             ItemDrawer(
-              destination: const UserCategory(isExpense: true),
+              destination: const UserCategoryScreen(),
               icon: Icons.category,
               title: 'Danh mục',
             ),
