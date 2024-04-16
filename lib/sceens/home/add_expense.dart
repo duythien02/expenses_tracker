@@ -61,6 +61,12 @@ class _AddExpenseState extends State<AddExpenseScreen> {
       }
     }
   }
+  @override
+  void dispose(){
+    super.dispose();
+    amount.dispose();
+    note.dispose();
+  }
 
   Future<void> getCategoryfromDB() async{
     await FirebaseAPI.getCategory(widget.expense!.categoryId).then((value) {
@@ -77,6 +83,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
       setState(() {
         isSubmited = true;
       });
+      FocusScope.of(context).unfocus();
       bool isChangeTypeExpense = false;
       if(widget.isUpdateExpense){
         if(widget.expense!.type == true && widget.isExpense == false || widget.expense!.type == false && widget.isExpense == true){
@@ -237,6 +244,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                   amount.text = value!.split('.')[0];
                                 }
                               },
+                              onTapOutside: (event) => FocusScope.of(context).unfocus(),
                             ),
                           ),
                         ),

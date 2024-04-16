@@ -21,6 +21,12 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
 
   bool isSubmited = false;
 
+  @override
+  void dispose(){
+    super.dispose();
+    balance.dispose();
+  }
+
   void _submit() async {
     final isValidForm = formKey.currentState!.validate();
     if (!isValidForm) {
@@ -114,6 +120,7 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                                   balance.text = value!.split('.')[0];
                                 }
                             },
+                            onTapOutside: (event) => FocusScope.of(context).unfocus(),
                           ),
                         ),
                       ),
