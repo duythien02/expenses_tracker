@@ -4,6 +4,7 @@ import 'package:expenses_tracker_app/data/categories_data.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
+import 'package:expenses_tracker_app/models/message.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -275,5 +276,25 @@ class FirebaseAPI {
         .collection('categories')
         .doc(categoryId)
         .set(category.toMap());
+  }
+
+  static Future<void> sendTextInChat(String text, String from,) async{
+    var uuid = const Uuid();
+    final ChatMessage message = ChatMessage(
+      messageId: uuid.v4(),
+      text: text,
+      from: from,
+      createAt: DateTime.now(),
+    );
+    return await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('chat_messages')
+      .doc(message.messageId)
+      .set(message.toMap());
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTextInChat() {
+    return firestore.collection('users').doc(user.uid).collection('chat_messages').orderBy('createAt',descending: true).snapshots();
   }
 }
