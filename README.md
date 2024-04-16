@@ -32,7 +32,7 @@ Application Features:
   - [ ] Suggestions for reasonable spending proposals
      
 - [ ] **Other utilities**
-  - [ ] Chat with AI
+  - [x] Chat with AI
   - [ ] Analyze expenses, income and display it as a chart
 ## Plugins
 
