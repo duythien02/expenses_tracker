@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isEmailVerified = false;
   TextEditingController balance = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!isEmailVerified) {
       _sendVerifyEmailAndShowDialog();
     }
+  }
+  @override
+  void dispose(){
+    super.dispose();
+    balance.dispose();
   }
 
   _sendVerifyEmailAndShowDialog() async {
