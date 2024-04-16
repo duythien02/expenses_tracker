@@ -39,6 +39,7 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
     setState(() {
       isSubmited = true;
     });
+    FocusScope.of(context).unfocus();
     if (widget.category != null) {
       return await FirebaseAPI.editCategory(
             widget.category!.categoryId,
@@ -151,6 +152,12 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
   }
 
   @override
+  void dispose(){
+    super.dispose();
+    categoryName.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -159,170 +166,230 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
       ),
-      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: icon != null ? colorPicker : null),
-                  child: icon != null
-                      ? Icon(
-                          icon!.iconData,
-                          color: Colors.white,
-                        )
-                      : const Icon(Icons.block),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Form(
-                    key: formKey,
-                    child: TextFormField(
-                      controller: categoryName,
-                      maxLength: 50,
-                      style: const TextStyle(fontSize: 18),
-                      decoration: const InputDecoration(
-                        errorStyle: TextStyle(fontSize: 14),
-                        hintText: "Tên danh mục",
-                        counterText: '',
-                      ),
-                      keyboardType: TextInputType.text,
-                      textCapitalization: TextCapitalization.none,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Chưa nhập tên danh mục';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        categoryName.text = value!.trim();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 3 / 5,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  SizedBox(
-                    child: Row(
-                      children: [
-                        Radio(
-                          visualDensity: const VisualDensity(
-                            horizontal: VisualDensity.minimumDensity,
-                          ),
-                          value: true,
-                          groupValue: widget.isExpense,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.isExpense = value!;
-                            });
-                          },
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: icon != null ? colorPicker : null),
+                    child: icon != null
+                        ? Icon(
+                            icon!.iconData,
+                            color: Colors.white,
+                          )
+                        : const Icon(Icons.block),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Form(
+                      key: formKey,
+                      child: TextFormField(
+                        controller: categoryName,
+                        maxLength: 50,
+                        style: const TextStyle(fontSize: 18),
+                        decoration: const InputDecoration(
+                          errorStyle: TextStyle(fontSize: 14),
+                          hintText: "Tên danh mục",
+                          counterText: '',
                         ),
-                        const Text(
-                          'Chi phí',
-                          style: TextStyle(color: Colors.black),
-                        )
-                      ],
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.none,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Chưa nhập tên danh mục';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          categoryName.text = value!.trim();
+                        },
+                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    child: Row(
-                      children: [
-                        Radio(
-                          visualDensity: const VisualDensity(
-                            horizontal: VisualDensity.minimumDensity,
-                          ),
-                          value: false,
-                          groupValue: widget.isExpense,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.isExpense = value!;
-                            });
-                          },
-                        ),
-                        const Text(
-                          'Thu nhập',
-                          style: TextStyle(color: Colors.black),
-                        )
-                      ],
-                    ),
-                  )
                 ],
               ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              'Biểu tượng',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 380,
-                child: GridView.count(
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 4,
+              const SizedBox(
+                height: 8,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 3 / 5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      child: Row(
+                        children: [
+                          Radio(
+                            visualDensity: const VisualDensity(
+                              horizontal: VisualDensity.minimumDensity,
+                            ),
+                            value: true,
+                            groupValue: widget.isExpense,
+                            onChanged: (value) {
+                              setState(() {
+                                widget.isExpense = value!;
+                              });
+                            },
+                          ),
+                          const Text(
+                            'Chi phí',
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      child: Row(
+                        children: [
+                          Radio(
+                            visualDensity: const VisualDensity(
+                              horizontal: VisualDensity.minimumDensity,
+                            ),
+                            value: false,
+                            groupValue: widget.isExpense,
+                            onChanged: (value) {
+                              setState(() {
+                                widget.isExpense = value!;
+                              });
+                            },
+                          ),
+                          const Text(
+                            'Thu nhập',
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                'Biểu tượng',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 380,
+                  child: GridView.count(
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 4,
+                    children: List.generate(
+                      listIcon.length + 1,
+                      (index) {
+                        if (index < listIcon.length) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (listIcon[index].picked == false) {
+                                  for(var icon in listIcon){
+                                    icon.picked = false;
+                                  }
+                                  listIcon[index].picked = true;
+                                  icon = listIcon[index];
+                                }
+                              });
+                            },
+                            child: CustomIconItem(
+                              icon: listIcon[index],
+                              color: colorPicker,
+                            ),
+                          );
+                        } else {
+                          return GestureDetector(
+                            onTap: () async {
+                              icon = await Navigator.push(context,MaterialPageRoute(builder: (context) => IconRepo(color: colorPicker,)));
+                              if (icon != null) {
+                                setState(() {
+                                  if (!listIcon.contains(icon)) {
+                                    for(var icon in listIcon){
+                                      icon.picked = false;
+                                    }
+                                    listIcon.removeLast();
+                                    listIcon.insert(0, icon!);
+                                  }
+                                });
+                              }
+                            },
+                            child: CustomIconItem(
+                              icon: null,
+                              color: colorPicker,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                'Màu sắc',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Center(
+                child: Wrap(
+                  direction: Axis.horizontal,
                   children: List.generate(
-                    listIcon.length + 1,
+                    8,
                     (index) {
-                      if (index < listIcon.length) {
+                      if (index < 7) {
                         return GestureDetector(
                           onTap: () {
+                            for(var color in listColors){
+                              color.isSelected = false;
+                            }
                             setState(() {
-                              if (listIcon[index].picked == false) {
-                                for(var icon in listIcon){
-                                  icon.picked = false;
-                                }
-                                listIcon[index].picked = true;
-                                icon = listIcon[index];
-                              }
+                              colorPicker = listColors[index].color;
+                              listColors[index].isSelected = true;
                             });
                           },
-                          child: CustomIconItem(
-                            icon: listIcon[index],
-                            color: colorPicker,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: listColors[index].color,
+                              child: listColors[index].isSelected
+                                  ? const Icon(Icons.check, color: Colors.white)
+                                  : null,
+                            ),
                           ),
                         );
                       } else {
                         return GestureDetector(
-                          onTap: () async {
-                            icon = await Navigator.push(context,MaterialPageRoute(builder: (context) => IconRepo(color: colorPicker,)));
-                            if (icon != null) {
-                              setState(() {
-                                if (!listIcon.contains(icon)) {
-                                  for(var icon in listIcon){
-                                    icon.picked = false;
-                                  }
-                                  listIcon.removeLast();
-                                  listIcon.insert(0, icon!);
-                                }
-                              });
-                            }
-                          },
-                          child: CustomIconItem(
-                            icon: null,
-                            color: colorPicker,
+                          onTap: showPickerColor,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.grey[500],
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         );
                       }
@@ -330,92 +397,34 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              'Màu sắc',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Center(
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: List.generate(
-                  8,
-                  (index) {
-                    if (index < 7) {
-                      return GestureDetector(
-                        onTap: () {
-                          for(var color in listColors){
-                            color.isSelected = false;
-                          }
-                          setState(() {
-                            colorPicker = listColors[index].color;
-                            listColors[index].isSelected = true;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: listColors[index].color,
-                            child: listColors[index].isSelected
-                                ? const Icon(Icons.check, color: Colors.white)
-                                : null,
-                          ),
+              const SizedBox(height: 32,),
+              Center(
+                child: ElevatedButton(
+                  onPressed: icon == null
+                      ? null
+                      : colorPicker == kColorScheme.primary
+                          ? null
+                          : isSubmited
+                              ? null
+                              : createCategory,
+                  child: isSubmited
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(),
+                        )
+                      : Text(
+                          widget.category != null ? 'Lưu' : 'Thêm',
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal),
                         ),
-                      );
-                    } else {
-                      return GestureDetector(
-                        onTap: showPickerColor,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: Colors.grey[500],
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  },
                 ),
               ),
-            ),
-            const Spacer(),
-            Center(
-              child: ElevatedButton(
-                onPressed: icon == null
-                    ? null
-                    : colorPicker == kColorScheme.primary
-                        ? null
-                        : isSubmited
-                            ? null
-                            : createCategory,
-                child: isSubmited
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(),
-                      )
-                    : Text(
-                        widget.category != null ? 'Lưu' : 'Thêm',
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 16,)
-          ],
+              const SizedBox(height: 16,)
+            ],
+          ),
         ),
       ),
     );

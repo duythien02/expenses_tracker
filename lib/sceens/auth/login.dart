@@ -17,9 +17,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _pass = TextEditingController();
 
+  final _passFocusNode = FocusNode();
+
   bool isSubmited = false;
 
   late bool _passwordVisible;
+
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -30,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isSubmited = true;
     });
+    FocusScope.of(context).unfocus();
     try {
       await FirebaseAPI.firebaseAuth
           .signInWithEmailAndPassword(email: _email.text, password: _pass.text)
@@ -55,6 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _passwordVisible = false;
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _email.dispose();
+    _pass.dispose();
   }
 
   @override
@@ -94,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textCapitalization: TextCapitalization.none,
+                    onFieldSubmitted: (text) => FocusScope.of(context).requestFocus(_passFocusNode),
                     validator: (value) {
                       if (value == null ||
                           value.trim().isEmpty ||
@@ -105,6 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onSaved: (value) {
                       _email.text = value!.trim();
                     },
+                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
                   ),
                 ),
                 const SizedBox(
@@ -113,6 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: 380,
                   child: TextFormField(
+                    focusNode: _passFocusNode,
                     controller: _pass,
                     style: const TextStyle(fontSize: 18),
                     obscureText: !_passwordVisible,

@@ -17,6 +17,11 @@ class _ResisterScreenState extends State<RegisterScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _userName = TextEditingController();
   final TextEditingController _pass = TextEditingController();
+
+  final _userNameFocusNode = FocusNode();
+  final _passFocusNode = FocusNode();
+  final _reTypePassFocusNode = FocusNode();
+
   bool isSubmited = false;
 
   @override
@@ -24,6 +29,14 @@ class _ResisterScreenState extends State<RegisterScreen> {
     super.initState();
     _passwordVisible = false;
     _reTypePasswordVisible = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _email.dispose();
+    _userName.dispose();
+    _pass.dispose();
   }
 
   void _submit() async {
@@ -35,6 +48,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
     setState(() {
       isSubmited = true;
     });
+    FocusScope.of(context).unfocus();
     try {
       await FirebaseAPI.firebaseAuth
           .createUserWithEmailAndPassword(
@@ -97,6 +111,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textCapitalization: TextCapitalization.none,
+                    onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_userNameFocusNode),
                     validator: (value) {
                       if (value == null ||
                           value.trim().isEmpty ||
@@ -108,6 +123,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                     onSaved: (value) {
                       _email.text = value!.trim();
                     },
+                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
                   ),
                 ),
                 const SizedBox(
@@ -116,6 +132,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   width: 380,
                   child: TextFormField(
+                    focusNode: _userNameFocusNode,
                     controller: _userName,
                     style: const TextStyle(fontSize: 18),
                     decoration: const InputDecoration(
@@ -124,6 +141,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                     ),
                     keyboardType: TextInputType.name,
                     textCapitalization: TextCapitalization.words,
+                    onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_passFocusNode),
                     validator: (value) {
                       if (value == null || value.trim().length < 4) {
                         return "Vui lòng nhập vào ít nhất 4 kí tự.";
@@ -141,6 +159,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   width: 380,
                   child: TextFormField(
+                    focusNode: _passFocusNode,
                     controller: _pass,
                     style: const TextStyle(fontSize: 18),
                     obscureText: !_passwordVisible,
@@ -157,6 +176,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                             });
                           },
                         )),
+                    onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_reTypePassFocusNode),
                     validator: (value) {
                       if (value == null || value.trim().length < 6) {
                         return "Mật khẩu phải có độ dài ít nhất 6 kí tự.";
@@ -174,6 +194,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   width: 380,
                   child: TextFormField(
+                    focusNode: _reTypePassFocusNode,
                     style: const TextStyle(fontSize: 18),
                     decoration: InputDecoration(
                         hintText: "Nhập lại mật khẩu",
