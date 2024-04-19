@@ -29,7 +29,7 @@ class ExpenseDetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
         actions: [
-          IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddExpenseScreen(isExpense: expense.type, currentAccount: account, isUpdateExpense: true, expense: expense,))), icon: const Icon(Icons.edit))
+          IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddExpenseScreen(isExpense: expense.type, currentAccount: account, expense: expense,))), icon: const Icon(Icons.edit))
         ],
       ),
       body: Padding(

@@ -39,38 +39,28 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
     setState(() {
       isSubmited = true;
     });
-    FocusScope.of(context).unfocus();
-    if (widget.category != null) {
-      return await FirebaseAPI.editCategory(
-            widget.category!.categoryId,
-            categoryName.text,
-            colorPicker.value,
-            icon!.iconData.codePoint.toString(),
-            widget.isExpense,
-            widget.category!.createAt)
-        .whenComplete(() => Navigator.pop(context,widget.isExpense));
-    }else{
-      return await FirebaseAPI.createCategory(
-            categoryName.text,
-            colorPicker.value,
-            icon!.iconData.codePoint.toString(),
-            widget.isExpense)
-        .whenComplete(() => Navigator.pop(context,widget.isExpense));
-    }
+    return await FirebaseAPI.setCategory(
+          widget.category?.categoryId,
+          categoryName.text,
+          colorPicker.value,
+          icon!.iconData.codePoint.toString(),
+          widget.isExpense,
+          widget.category?.createAt,)
+      .whenComplete(() => Navigator.pop(context,widget.isExpense));
   }
 
-  List<CustomIcon> getIcon() {
-    List<CustomIcon> randomIcon = [];
+  List<CustomIcon> getIconFromRepo() {
+    List<CustomIcon> listIcon = [];
     for (int i = 0; i < 15; i++) {
       var key = customIcon.keys.elementAt(i % customIcon.length);
       var value = customIcon[key];
-      if (!randomIcon.contains(value![0])) {
-        randomIcon.add(value[0]);
+      if (!listIcon.contains(value![0])) {
+        listIcon.add(value[0]);
       } else {
-        randomIcon.add(value[1]);
+        listIcon.add(value[1]);
       }
     }
-    return randomIcon;
+    return listIcon;
   }
 
   showPickerColor() {
@@ -120,16 +110,16 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
   @override
   void initState() {
     super.initState();
-    listIcon = getIcon();
-    listColors = colors.sublist(0,colors.length);
     customIcon.forEach((key, value) {
       for (var icon in value) {
         icon.picked = false;
       }
     });
-    for (var color in listColors) {
+    for (var color in colors) {
       color.isSelected = false;
     }
+    listIcon = getIconFromRepo();
+    listColors = colors.sublist(0,colors.length);
     if(widget.category != null){
       icon = CustomIcon(iconData: IconData(int.parse(widget.category!.symbol),fontFamily: "MyIcon"),picked: true);
       colorPicker = Color(widget.category!.color);
@@ -285,9 +275,9 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                 height: 8,
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: SizedBox(
-                  height: 380,
+                  height: 370,
                   child: GridView.count(
                     physics: const NeverScrollableScrollPhysics(),
                     crossAxisCount: 4,
@@ -297,15 +287,15 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                         if (index < listIcon.length) {
                           return GestureDetector(
                             onTap: () {
-                              setState(() {
                                 if (listIcon[index].picked == false) {
-                                  for(var icon in listIcon){
+                                  setState(() {
+                                    for(var icon in listIcon){
                                     icon.picked = false;
                                   }
                                   listIcon[index].picked = true;
                                   icon = listIcon[index];
+                                  });
                                 }
-                              });
                             },
                             child: CustomIconItem(
                               icon: listIcon[index],
@@ -358,13 +348,15 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                       if (index < 7) {
                         return GestureDetector(
                           onTap: () {
-                            for(var color in listColors){
-                              color.isSelected = false;
+                            if(listColors[index].isSelected == false){
+                              for(var color in listColors){
+                                color.isSelected = false;
+                              }
+                              setState(() {
+                                colorPicker = listColors[index].color;
+                                listColors[index].isSelected = true;
+                              });
                             }
-                            setState(() {
-                              colorPicker = listColors[index].color;
-                              listColors[index].isSelected = true;
-                            });
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(right: 6),

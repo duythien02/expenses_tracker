@@ -296,6 +296,7 @@ class HomePieChart extends StatelessWidget {
                     bottom: 0,
                     child: Container(
                       width: 50,
+                      height: 50,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Color.fromRGBO(255, 177, 32, 1),
@@ -310,7 +311,6 @@ class HomePieChart extends StatelessWidget {
                                           isExpense: isExpense,
                                           listAccount: listAccount,
                                           currentAccount: currentAccount,
-                                          isUpdateExpense: false,
                                         )));
                           },
                           icon: const Icon(Icons.add)),
