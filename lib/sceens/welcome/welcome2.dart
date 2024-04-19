@@ -14,13 +14,14 @@ class WelcomScreen2 extends StatefulWidget {
 }
 
 class _WelcomScreen2State extends State<WelcomScreen2> {
+  final List<Currency> listCurrency = currencies;
   bool isSearching = false;
   final List<Currency> _searchList = [];
   bool pickCurrency = false;
 
   void _runFilter(String enteredKeyword) {
     _searchList.clear();
-    for (var currency in currencies) {
+    for (var currency in listCurrency) {
       if (currency.name.toLowerCase().contains(enteredKeyword.toLowerCase()) || currency.code.toLowerCase().contains(enteredKeyword.toLowerCase())) {
       _searchList.add(currency);
       }
@@ -71,24 +72,24 @@ class _WelcomScreen2State extends State<WelcomScreen2> {
                       : Container(
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          color: currencies[index].picked  ? kColorScheme.primaryContainer : kColorScheme.background,
+                          color: listCurrency[index].picked  ? kColorScheme.primaryContainer : kColorScheme.background,
                         ),
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              if(currencies.indexWhere((e) => e.picked == true) >= 0){
-                                currencies[currencies.indexWhere((e) => e.picked == true)].picked = false;
+                              if(listCurrency.indexWhere((e) => e.picked == true) >= 0){
+                                listCurrency[listCurrency.indexWhere((e) => e.picked == true)].picked = false;
                               }
-                              currencies[index].picked = true;
+                              listCurrency[index].picked = true;
                             });
                           },
                           child: ListTile(
-                            title: Text(currencies[index].name,),
-                            trailing: Text(currencies[index].code),
+                            title: Text(listCurrency[index].name,),
+                            trailing: Text(listCurrency[index].code),
                           ),
                         ),
                       ),
-                      itemCount: isSearching ? _searchList.length :  currencies.length,
+                      itemCount: isSearching ? _searchList.length :  listCurrency.length,
                     ),
                   ),
                   const SizedBox(height: 12,),
@@ -98,7 +99,7 @@ class _WelcomScreen2State extends State<WelcomScreen2> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomScreen3(currency: _searchList[_searchList.indexWhere((e) => e.picked == true)],)));
                       }
                       else{
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomScreen3(currency: currencies[currencies.indexWhere((e) => e.picked == true)],)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomScreen3(currency: listCurrency[currencies.indexWhere((e) => e.picked == true)],)));
                       }
                     },
                     child: const Text('Tiếp theo', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),),

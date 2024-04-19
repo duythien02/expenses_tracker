@@ -131,3 +131,26 @@ Map<String, List<CustomIcon>> customIcon = {
     CustomIcon(iconData: const IconData(0xe868, fontFamily: "MyIcon"),),
   ],
 };
+
+
+List<CustomIcon> listIconForAccount= [
+  CustomIcon(iconData: const IconData(0xe808, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe83b, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe83c, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe83d, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe83e, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe83f, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe840, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe841, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe842, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe843, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe844, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe876, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe877, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe878, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe879, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe87a, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe87b, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe87c, fontFamily: "MyIcon"),),
+  CustomIcon(iconData: const IconData(0xe87d, fontFamily: "MyIcon"),),
+];

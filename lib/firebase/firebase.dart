@@ -7,12 +7,15 @@ import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/models/message.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:uuid/uuid.dart';
 
 class FirebaseAPI {
   static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  static FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   static User get user => firebaseAuth.currentUser!;
 
@@ -35,7 +38,7 @@ class FirebaseAPI {
       double balance,
       String curCode,
       String curName,
-      String curSymbol,
+      String curLocale,
       String symbol,
       int color) async {
     for (var category in defaultCategories) {
@@ -46,25 +49,7 @@ class FirebaseAPI {
           .doc(category.categoryId)
           .set(category.toMap());
     }
-    var uuid = const Uuid();
-    final account = Account(
-        accountId: uuid.v4(),
-        accountName: name,
-        accountBalance: balance,
-        currencyCode: curCode,
-        currencyName: curName,
-        currencyLocale: curSymbol,
-        symbol: symbol,
-        color: color,
-        isMain: true,
-        isActive: true,
-        createAt: DateTime.now());
-    return await firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('accounts')
-        .doc(account.accountId)
-        .set(account.toMap());
+    return await setAccount(null,name, balance, curCode, curName, curLocale, symbol, color,true, true,null);
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAccount() {
@@ -72,6 +57,7 @@ class FirebaseAPI {
         .collection('users')
         .doc(user.uid)
         .collection('accounts')
+        .orderBy('createAt',descending: false)
         .snapshots();
   }
 
@@ -176,16 +162,15 @@ class FirebaseAPI {
     });
   }
 
-  static Future<void> createCategory(
-      String categoryName, int color, String symbol, bool type) async {
+  static Future<void> setCategory(String? categoryId, String categoryName, int color, String symbol, bool type, DateTime? createAt) async {
     var uuid = const Uuid();
     final category = Category(
-      categoryId: uuid.v4(),
+      categoryId: categoryId ?? uuid.v4(),
       categoryName: categoryName,
       color: color,
       symbol: symbol,
       type: type,
-      createAt: DateTime.now()
+      createAt: createAt ?? DateTime.now()
     );
     return await firestore
         .collection('users')
@@ -233,8 +218,8 @@ class FirebaseAPI {
     return category;
   }
 
-  static Future<void> updateExpense(String expenseId,double newAmount, double oldAmount, Category category, DateTime date,
-      String? note, String accountId, bool isExpense, bool expenseToIncome) async{
+  static Future<void> editExpense(String expenseId,double newAmount, double oldAmount, Category category, DateTime date,
+      String? note, String accountId, bool isExpense, bool isChangeTypeExpense) async{
     final newExpense = Expense(
         expenseId: expenseId,
         amount: newAmount,
@@ -255,27 +240,10 @@ class FirebaseAPI {
       .set(newExpense.toMap())
       .whenComplete(() async => await calMoneyFromAccount(
         accountId,
-        expenseToIncome 
+        isChangeTypeExpense 
           ? newAmount + oldAmount 
           : newAmount - oldAmount,
         isExpense, false));
-  }
-
-  static Future<void> editCategory(String categoryId, String categoryName, int color, String symbol, bool type, DateTime createAt) async {
-    final category = Category(
-      categoryId: categoryId,
-      categoryName: categoryName,
-      color: color,
-      symbol: symbol,
-      type: type,
-      createAt: createAt
-    );
-    return await firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('categories')
-        .doc(categoryId)
-        .set(category.toMap());
   }
 
   static Future<void> sendTextInChat(String text, String from,) async{
@@ -296,5 +264,76 @@ class FirebaseAPI {
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getTextInChat() {
     return firestore.collection('users').doc(user.uid).collection('chat_messages').orderBy('createAt',descending: true).snapshots();
+  }
+
+  static Future<List<Account>> getListAccount() async{
+    QuerySnapshot querySnapshot = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('accounts').orderBy('createAt', descending: false)
+        .get();
+    return querySnapshot.docs
+        .map((e) => Account.fromMap(e.data() as Map<String, dynamic>))
+        .toList();
+  }
+
+  static Future<Account> getMainAccount() async{
+    QuerySnapshot querySnapshot = await firestore.collection('users').doc(user.uid).collection('accounts').get();
+    late Account account;
+    for(var doc in querySnapshot.docs){
+      if (doc['isMain'] == true){
+        account = Account.fromMap(doc.data() as Map<String,dynamic>);
+      }
+    }
+    return account;
+  }
+
+  static Future<void> setAccount(String? accountId, String name,double balance,String curCode,String curName,String curLocale,String symbol,int color, bool isMain, bool isActive, DateTime? createAt) async{
+    var uuid = const Uuid();
+    final account = Account(
+        accountId: accountId ?? uuid.v4(),
+        accountName: name,
+        accountBalance: balance,
+        currencyCode: curCode,
+        currencyName: curName,
+        currencyLocale: curLocale,
+        symbol: symbol,
+        color: color,
+        isMain: isMain,
+        isActive: isActive,
+        createAt: createAt ?? DateTime.now());
+    return await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('accounts')
+        .doc(account.accountId)
+        .set(account.toMap());
+  }
+
+  static Future<void> deleteAccount(String accountId) async{
+    return await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('accounts')
+      .doc(accountId)
+      .delete();
+  }
+
+  static Future<void> getFirebaseMessageingToken() async {
+    await firebaseMessaging.requestPermission();
+    firebaseMessaging.getToken().then((t) {
+      if (t != null) {
+        // token = t;
+        print('Push token: $t');
+      }
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
   }
 }

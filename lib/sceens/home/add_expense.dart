@@ -18,13 +18,11 @@ class AddExpenseScreen extends StatefulWidget {
       required this.isExpense,
       this.listAccount,
       required this.currentAccount,
-      this.expense,
-      required this.isUpdateExpense});
+      this.expense,});
   bool isExpense;
   final List<Account>? listAccount;
   Account currentAccount;
   final Expense? expense;
-  final bool isUpdateExpense;
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseState();
@@ -49,7 +47,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
   void initState() {
     super.initState();
     if(widget.expense != null){
-      getCategoryfromDB();
+      getCategoryOfExpense();
       isCategoryPicked = true;
       if (!currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode)) {
         amount.text = widget.expense!.amount.toStringAsFixed(0);
@@ -68,7 +66,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
     note.dispose();
   }
 
-  Future<void> getCategoryfromDB() async{
+  Future<void> getCategoryOfExpense() async{
     await FirebaseAPI.getCategory(widget.expense!.categoryId).then((value) {
       setState(() {
         category = value;
@@ -85,11 +83,11 @@ class _AddExpenseState extends State<AddExpenseScreen> {
       });
       FocusScope.of(context).unfocus();
       bool isChangeTypeExpense = false;
-      if(widget.isUpdateExpense){
+      if(widget.expense != null){
         if(widget.expense!.type == true && widget.isExpense == false || widget.expense!.type == false && widget.isExpense == true){
           isChangeTypeExpense = true;
         }
-        await FirebaseAPI.updateExpense(
+        await FirebaseAPI.editExpense(
           widget.expense!.expenseId,
           double.parse(amount.text),
           widget.expense!.amount,
@@ -124,7 +122,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.isUpdateExpense ? 'Chỉnh sửa giao dịch' : 'Thêm giao dịch',
+          widget.expense != null ? 'Chỉnh sửa giao dịch' : 'Thêm giao dịch',
         ),
       ),
       body: Column(
@@ -268,7 +266,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                       height: 5,
                     ),
                     GestureDetector(
-                      onTap: widget.isUpdateExpense ? null : () async {
+                      onTap: widget.expense != null ? null : () async {
                         await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -377,15 +375,15 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                       index < listCategories.length)) {
                                     return GestureDetector(
                                       onTap: () {
-                                        setState(() {
-                                          if (listCategories[index].picked == false) {
+                                        if (listCategories[index].picked == false){
+                                          setState(() {
                                             for(var category in listCategories){
                                               category.picked = false;
                                             }
                                             isCategoryPicked = true;
                                             listCategories[index].picked = true;
-                                          }
                                         });
+                                        }
                                       },
                                       child: CategoryItem(
                                         category: listCategories[index],
@@ -411,6 +409,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                                 }else{
                                                   setState(() {
                                                     widget.isExpense = false;
+                                                    isCategoryPicked = true;
                                                   });
                                                 }
                                                 value[0].picked = true;
@@ -494,7 +493,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                             : null,
                         child: !isSubmited
                             ? Text(
-                                widget.isUpdateExpense ? 'Lưu' : 'Thêm',
+                                widget.expense != null ? 'Lưu' : 'Thêm',
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 18,

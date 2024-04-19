@@ -108,9 +108,7 @@ class _UserCategoryScreenState extends State<UserCategoryScreen> {
             future: getCategory,
             builder: (context, category) {
               if (category.connectionState == ConnectionState.waiting) {
-                return Container(
-                  height: MediaQuery.of(context).size.width / 2 - 15,
-                );
+                return const Center(child: CircularProgressIndicator(),);
               }
               if (category.hasData) {
                 if (isExpense) {

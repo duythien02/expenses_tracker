@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     FirebaseAPI.user.reload();
+    FirebaseAPI.getFirebaseMessageingToken();
     isEmailVerified = FirebaseAPI.user.emailVerified;
     if (!isEmailVerified) {
       _sendVerifyEmailAndShowDialog();
