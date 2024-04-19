@@ -139,4 +139,12 @@ class MyIcon {
   static const IconData store = IconData(0xe873, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData tshirt = IconData(0xe874, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData wristwatch = IconData(0xe875, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData creditCard1 = IconData(0xe876, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData dong = IconData(0xe877, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData euro = IconData(0xe878, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData piggyBank2 = IconData(0xe879, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData dollarSymbol = IconData(0xe87a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData purse = IconData(0xe87b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData paypal = IconData(0xe87c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData piggyBank = IconData(0xe87d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
