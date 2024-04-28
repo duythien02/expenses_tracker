@@ -504,6 +504,8 @@ class _HomeScreenState extends State<HomeScreen> {
           if (user.hasData) {
             return MainDrawer(
               user: user.data!,
+              expenseData: widget.expenseData,
+              account: widget.currentAccount,
             );
           }
           return Container();

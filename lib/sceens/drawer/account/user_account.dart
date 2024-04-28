@@ -1,14 +1,19 @@
 import 'package:expenses_tracker_app/data/curencies_data.dart';
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
+import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/currency.dart';
+import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/sceens/drawer/account/create_account.dart';
 import 'package:expenses_tracker_app/widgets/account/currency_card.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class UserAccountScreen extends StatefulWidget {
-  const UserAccountScreen({super.key});
+  const UserAccountScreen({super.key, required this.expenseData, required this.account});
+  final Map<dynamic, List<Expense>> expenseData;
+  final Account account;
 
   @override
   State<UserAccountScreen> createState() => _UserAccountScreenState();
@@ -47,6 +52,8 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
           if (user.hasData) {
             return MainDrawer(
               user: user.data!,
+              expenseData: widget.expenseData,
+              account: widget.account,
             );
           }
           return Container();

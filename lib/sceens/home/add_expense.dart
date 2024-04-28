@@ -57,6 +57,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
       if(widget.expense!.note != null){
         note.text = widget.expense!.note!;
       }
+      selectedDate = widget.expense!.date;
     }
   }
   @override

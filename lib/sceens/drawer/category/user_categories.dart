@@ -1,14 +1,19 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
+import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/category.dart';
+import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/sceens/drawer/category/create_cateogry.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/category/category_item.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class UserCategoryScreen extends StatefulWidget {
-  const UserCategoryScreen({super.key});
-
+  const UserCategoryScreen({super.key, required this.expenseData, required this.account});
+  final Map<dynamic, List<Expense>> expenseData;
+  final Account account;
+  
   @override
   State<UserCategoryScreen> createState() => _UserCategoryScreenState();
 }
@@ -29,6 +34,8 @@ class _UserCategoryScreenState extends State<UserCategoryScreen> {
           if (user.hasData) {
             return MainDrawer(
               user: user.data!,
+              expenseData: widget.expenseData,
+              account: widget.account,
             );
           }
           return Container();

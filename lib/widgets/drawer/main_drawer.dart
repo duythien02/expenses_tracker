@@ -1,4 +1,6 @@
 import 'package:expenses_tracker_app/main.dart';
+import 'package:expenses_tracker_app/models/account.dart';
+import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:expenses_tracker_app/sceens/drawer/account/user_account.dart';
 import 'package:expenses_tracker_app/sceens/drawer/chart/chart.dart';
@@ -10,8 +12,10 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class MainDrawer extends StatelessWidget {
-  MainDrawer({super.key, required this.user});
+  MainDrawer({super.key, required this.user,required this.expenseData, required this.account});
   UserModel user;
+  final Map<dynamic, List<Expense>> expenseData;
+  final Account account;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class MainDrawer extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ProfileScreen(user: user,)),(route) => route.isFirst);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ProfileScreen(user: user,expenseData: expenseData,account: account)),(route) => route.isFirst);
               },
               child: UserAccountsDrawerHeader(
                   decoration: BoxDecoration(
@@ -56,22 +60,22 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             ItemDrawer(
-              destination: const UserCategoryScreen(),
+              destination: UserCategoryScreen(expenseData: expenseData,account: account),
               icon: Icons.category,
               title: 'Danh mục',
             ),
             ItemDrawer(
-              destination: const UserAccountScreen(),
+              destination: UserAccountScreen(expenseData: expenseData,account: account),
               icon: Icons.account_balance,
               title: 'Tài khoản',
             ),
             ItemDrawer(
-              destination: const ChartScreen(),
+              destination: ChartScreen(expenseData: expenseData,account: account),
               icon: Icons.bar_chart,
               title: 'Biểu đồ',
             ),
             ItemDrawer(
-              destination: const ChatScreen(),
+              destination: ChatScreen(expenseData: expenseData,account: account),
               icon: Icons.message,
               title: 'Chat',
             ),
