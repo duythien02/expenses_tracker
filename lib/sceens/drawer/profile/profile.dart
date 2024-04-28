@@ -1,14 +1,19 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
+import 'package:expenses_tracker_app/models/account.dart';
+import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+// ignore: must_be_immutable
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, required this.user});
+  const ProfileScreen({super.key, required this.user, required this.expenseData, required this.account});
   final UserModel user;
+  final Map<dynamic, List<Expense>> expenseData;
+  final Account account;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -39,6 +44,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (user.connectionState == ConnectionState.done) {
             return MainDrawer(
               user: user.data!,
+              expenseData: widget.expenseData,
+              account: widget.account,
             );
           }
           return Container();
