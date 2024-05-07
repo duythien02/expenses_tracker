@@ -288,7 +288,7 @@ class FirebaseAPI {
     return account;
   }
 
-  static Future<void> setAccount(String? accountId, String name,double balance,String curCode,String curName,String curLocale,String symbol,int color, bool isMain, bool isActive, DateTime? createAt) async{
+  static Future<void> setAccount(String? accountId, String name,double balance,String curCode,String curName,String curLocale,String symbol,int color, bool? isMain, bool? isActive, DateTime? createAt) async{
     var uuid = const Uuid();
     final account = Account(
         accountId: accountId ?? uuid.v4(),
@@ -299,8 +299,8 @@ class FirebaseAPI {
         currencyLocale: curLocale,
         symbol: symbol,
         color: color,
-        isMain: isMain,
-        isActive: isActive,
+        isMain: isMain ?? false,
+        isActive: isActive ?? false,
         createAt: createAt ?? DateTime.now());
     return await firestore
         .collection('users')
@@ -317,23 +317,5 @@ class FirebaseAPI {
       .collection('accounts')
       .doc(accountId)
       .delete();
-  }
-
-  static Future<void> getFirebaseMessageingToken() async {
-    await firebaseMessaging.requestPermission();
-    firebaseMessaging.getToken().then((t) {
-      if (t != null) {
-        // token = t;
-        print('Push token: $t');
-      }
-    });
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-      }
-    });
   }
 }
