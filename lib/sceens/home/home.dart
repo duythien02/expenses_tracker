@@ -5,6 +5,7 @@ import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
+//import 'package:expenses_tracker_app/services/notification_service.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/home/expense/expense_card_item.dart';
 import 'package:expenses_tracker_app/widgets/home/pie_chart.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -42,8 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+    OneSignal.initialize("b6f45032-a223-4f61-ac8f-e30e22ed8dae");
+    // The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+    OneSignal.Notifications.requestPermission(true);
+    //NotificationService.showNotification(title: "Nhắc nhở", body: "Đừng quên ghi lại chi tiêu hôm nay của bạn!", payload: '');
     FirebaseAPI.user.reload();
-    FirebaseAPI.getFirebaseMessageingToken();
     isEmailVerified = FirebaseAPI.user.emailVerified;
     if (!isEmailVerified) {
       _sendVerifyEmailAndShowDialog();

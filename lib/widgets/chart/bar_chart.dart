@@ -339,7 +339,9 @@ class _AnalysisBarChartState extends State<AnalysisBarChart> {
                                       });
                                     }
                                   }else{
-                                    mapExpense = widget.classifyExpense[response.spot!.touchedBarGroupIndex];
+                                    if(!widget.classifyExpense[response.spot!.touchedBarGroupIndex].containsKey('emptyData')){
+                                      mapExpense = widget.classifyExpense[response.spot!.touchedBarGroupIndex];
+                                    }
                                   }
                                   setState(() {
                                     final x = response.spot!.touchedBarGroup.x;

@@ -34,7 +34,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool isSubmited = false;
   bool isIconPicked = false;
 
-    void createAccount() async {
+  void createAccount() async {
     final isValidForm = formKey.currentState!.validate();
     if (!isValidForm) {
       return;
@@ -52,8 +52,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             widget.currency.locale,
             listIconAccount.firstWhere((element) => element.picked == true).iconData.codePoint.toString(),
             colorPicker.value,
-            widget.account!.isMain,
-            widget.account!.isActive,
+            widget.account?.isMain,
+            widget.account?.isActive,
             widget.account?.createAt
             )
         .whenComplete(() => Navigator.pop(context,true));
@@ -213,7 +213,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 });
                               }
                             },
-                            child: Text(widget.currency.code,
+                            child: Text(widget.account != null ? widget.account!.currencyCode : widget.currency.code,
                               style: TextStyle(
                                 color: kColorScheme.primary, fontSize: 20
                               ),
@@ -299,7 +299,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     });
                   }
                 },
-                child: Text(widget.currency.code,
+                child: Text(widget.account != null ? widget.account!.currencyCode : widget.currency.code,
                   style: TextStyle(
                     color: kColorScheme.primary, fontSize: 20
                   ),
