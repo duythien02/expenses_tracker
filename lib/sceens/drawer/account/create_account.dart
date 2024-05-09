@@ -7,6 +7,7 @@ import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/currency.dart';
 import 'package:expenses_tracker_app/models/custom_icon.dart';
 import 'package:expenses_tracker_app/models/my_color_picker.dart';
+import 'package:expenses_tracker_app/models/transfer.dart';
 import 'package:expenses_tracker_app/sceens/drawer/account/pick_currency.dart';
 import 'package:expenses_tracker_app/widgets/category/custom_icon.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     setState(() {
       isSubmited = true;
     });
+    if(widget.account != null && double.parse(balance.text) != widget.account!.accountBalance){
+      double difference = double.parse(balance.text) - widget.account!.accountBalance;
+      await FirebaseAPI.setTransfer(widget.account!, null, difference, DateTime.utc(DateTime.now().day, DateTime.now().month, DateTime.now().year), null, TransferType.change.name);
+    }
       return await FirebaseAPI.setAccount(
             widget.account?.accountId,
             accountName.text,
