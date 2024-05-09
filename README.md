@@ -26,14 +26,15 @@ Application Features:
 - [ ] **Backend Actions**
   - [x] Cloud Functions
   - [x] User Presence tracking
-  - [ ] Push notifications using Firebase Cloud Messaging (FCM)
+  - [x] Push notifications reminder daily using OneSignal and Zapier
 
 - [ ] **Machine Learning**
   - [ ] Suggestions for reasonable spending proposals
      
 - [ ] **Other utilities**
   - [x] Chat with AI
-  - [ ] Analyze expenses, income and display it as a chart
+  - [x] Analyze expenses, income and display it as a chart
+  - [ ] Transfer money between accounts
 ## Plugins
 
 For this project you have to add two plugins:
