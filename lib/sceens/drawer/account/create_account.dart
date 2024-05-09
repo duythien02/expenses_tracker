@@ -7,6 +7,7 @@ import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/currency.dart';
 import 'package:expenses_tracker_app/models/custom_icon.dart';
 import 'package:expenses_tracker_app/models/my_color_picker.dart';
+import 'package:expenses_tracker_app/models/transfer.dart';
 import 'package:expenses_tracker_app/sceens/drawer/account/pick_currency.dart';
 import 'package:expenses_tracker_app/widgets/category/custom_icon.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     setState(() {
       isSubmited = true;
     });
+    if(widget.account != null && double.parse(balance.text) != widget.account!.accountBalance){
+      double difference = double.parse(balance.text) - widget.account!.accountBalance;
+      await FirebaseAPI.setTransfer(widget.account!, null, difference, DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day), null, TransferType.change.name);
+    }
       return await FirebaseAPI.setAccount(
             widget.account?.accountId,
             accountName.text,
@@ -56,7 +61,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             widget.account?.isActive,
             widget.account?.createAt
             )
-        .whenComplete(() => Navigator.pop(context,true));
+        .whenComplete(() => Navigator.pop(context,false));
   }
 
   @override
@@ -71,6 +76,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     listColors = colors.sublist(0,colors.length);
     listIconAccount = listIconForAccount;
     if(widget.account != null){
+      widget.currency = currencies.firstWhere((element) => element.code == widget.account!.currencyCode);
       isIconPicked = true;
       if (!currenciesCodeHasDecimal.contains(widget.account!.currencyCode)) {
         balance.text = widget.account!.accountBalance.toStringAsFixed(0);
@@ -205,17 +211,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
                         Expanded(
                           child: GestureDetector(
-                            onTap: () async {
-                              var cur = await Navigator.push(context, MaterialPageRoute(builder: (context) => PickCurrencyScreen(currency: widget.currency,)));
+                            onTap: widget.account != null ? null : () async {
+                              Currency? cur = await Navigator.push(context, MaterialPageRoute(builder: (context) => PickCurrencyScreen(currency: widget.currency,)));
                               if(cur != null){
                                 setState(() {
                                   widget.currency = cur;
                                 });
                               }
                             },
-                            child: Text(widget.account != null ? widget.account!.currencyCode : widget.currency.code,
+                            child: Text(widget.currency.code,
                               style: TextStyle(
-                                color: kColorScheme.primary, fontSize: 20
+                                color: widget.account != null ? Colors.black : kColorScheme.primary, fontSize: 20
                               ),
                             ),
                           ),
@@ -286,25 +292,27 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                 ),
               ),
-              Text(
-                'Chọn đơn vị tiền tệ',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              ),
-              InkWell(
-                onTap: () async {
-                  var cur = await Navigator.push(context, MaterialPageRoute(builder: (context) => PickCurrencyScreen(currency: widget.currency,)));
-                  if(cur != null){
-                    setState(() {
-                      widget.currency = cur;
-                    });
-                  }
-                },
-                child: Text(widget.account != null ? widget.account!.currencyCode : widget.currency.code,
-                  style: TextStyle(
-                    color: kColorScheme.primary, fontSize: 20
+              if(widget.account == null)
+                Text(
+                  'Chọn đơn vị tiền tệ',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                ),
+              if(widget.account == null)
+                InkWell(
+                  onTap: () async {
+                    Currency? cur = await Navigator.push(context, MaterialPageRoute(builder: (context) => PickCurrencyScreen(currency: widget.currency,)));
+                    if(cur != null){
+                      setState(() {
+                        widget.currency = cur;
+                      });
+                    }
+                  },
+                  child: Text(widget.currency.code,
+                    style: TextStyle(
+                      color: kColorScheme.primary, fontSize: 20
+                    ),
                   ),
                 ),
-              ),
               widget.account != null && !widget.account!.isMain ? Column(
                 children: [
                   const SizedBox(height: 18,),
@@ -331,7 +339,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ],
                           );
                         },
-                      ).whenComplete(() => Navigator.pop(context,false));
+                      ).whenComplete(() => Navigator.pop(context,widget.account!.isActive));
                     },
                     child: const Text('XOÁ',style: TextStyle(color: Colors.red,fontSize: 18),),
                   ),

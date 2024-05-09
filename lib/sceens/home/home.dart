@@ -5,6 +5,7 @@ import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
+import 'package:expenses_tracker_app/models/transfer.dart';
 //import 'package:expenses_tracker_app/services/notification_service.dart';
 import 'package:expenses_tracker_app/widgets/drawer/main_drawer.dart';
 import 'package:expenses_tracker_app/widgets/home/expense/expense_card_item.dart';
@@ -424,7 +425,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
                             Navigator.pop(context);
-                            await FirebaseAPI.updateBalance(double.parse(balance.text), widget.currentAccount.accountId);
+                            if(double.parse(balance.text) != widget.currentAccount.accountBalance){
+                              double difference = double.parse(balance.text) - widget.currentAccount.accountBalance;
+                              await FirebaseAPI.setTransfer(widget.currentAccount, null, difference, timeNow, null, TransferType.change.name);
+                              await FirebaseAPI.updateBalance(double.parse(balance.text), widget.currentAccount.accountId);
+                            }
                           }
                         },
                         child: const Text('CHỈNH SỬA'),

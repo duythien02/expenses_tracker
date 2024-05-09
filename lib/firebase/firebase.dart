@@ -5,6 +5,7 @@ import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/category.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
 import 'package:expenses_tracker_app/models/message.dart';
+import 'package:expenses_tracker_app/models/transfer.dart';
 import 'package:expenses_tracker_app/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -302,6 +303,9 @@ class FirebaseAPI {
         isMain: isMain ?? false,
         isActive: isActive ?? false,
         createAt: createAt ?? DateTime.now());
+    if(accountId == null && balance != 0){
+      await setTransfer(account, null, balance, createAt ?? DateTime.now(), null, TransferType.init.name);
+    }
     return await firestore
         .collection('users')
         .doc(user.uid)
@@ -317,5 +321,75 @@ class FirebaseAPI {
       .collection('accounts')
       .doc(accountId)
       .delete();
+  }
+
+  static Future<void> setTransfer(Account fromAccount, Account? toAccount, double amount, DateTime createAt, String? note, String type) async{
+    var uuid = const Uuid();
+    final transfer = Transfer(
+      transferID: uuid.v4(),
+      fromAccountId: fromAccount.accountId,
+      fromAccountName: fromAccount.accountName,
+      toAccountId: toAccount?.accountId,
+      toAccountName: toAccount?.accountName,
+      amount: amount,
+      currencyLocal: fromAccount.currencyLocale,
+      createdAt: createAt,
+      note: note,
+      type: type,
+    );
+    await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('accounts')
+      .doc(fromAccount.accountId)
+      .collection('transfer')
+      .doc(transfer.transferID)
+      .set(transfer.toMap()).whenComplete(() async {
+        if(type != TransferType.transfer.name){
+          return;
+        }else{
+          await calMoneyFromAccount(fromAccount.accountId, amount, true, false);
+        }
+      });
+    if(toAccount != null){
+      await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('accounts')
+      .doc(toAccount.accountId)
+      .collection('transfer')
+      .doc(transfer.transferID)
+      .set(transfer.toMap()).whenComplete(() async {
+        if(type != TransferType.transfer.name){
+          return;
+        }else{
+          await calMoneyFromAccount(toAccount.accountId, amount, false, false);
+        }
+      });
+    }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllTransfer(
+      Account account) {
+    return firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('accounts')
+        .doc(account.accountId)
+        .collection('transfer')
+        .snapshots();
+  }
+
+  static Stream<Map<DateTime, List<Transfer>>> getGroupedTransferStream(
+      Account account) {
+    return getAllTransfer(account).map((QuerySnapshot snapshot) {
+      List<Transfer> listTransfer = [];
+      Map<DateTime, List<Transfer>> groupedTransfer = {};
+      for (DocumentSnapshot doc in snapshot.docs) {
+        listTransfer.add(Transfer.fromMap(doc.data() as Map<String, dynamic>));
+        groupedTransfer = groupBy(listTransfer, (transfer) => transfer.createdAt);
+      }
+      return groupedTransfer;
+    });
   }
 }

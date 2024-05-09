@@ -2,8 +2,8 @@ import 'package:expenses_tracker_app/models/account.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class CurrencyCard extends StatelessWidget {
-  const CurrencyCard({super.key, required this.account});
+class AccountCard extends StatelessWidget {
+  const AccountCard({super.key, required this.account});
   final Account account;
 
   String moneyFormat(){
