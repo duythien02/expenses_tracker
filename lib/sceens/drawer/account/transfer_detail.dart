@@ -127,15 +127,19 @@ class TransferDetailScreen extends StatelessWidget {
                             fontSize: 16,),
                         ),
                         actions: [
-                          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
+                          TextButton(onPressed: () => Navigator.pop(context,false), child: const Text('Huỷ')),
                           TextButton(onPressed: () async {
-                            Navigator.pop(context);
+                            Navigator.pop(context,true);
                             await FirebaseAPI.deleteTransfer(listAccount.firstWhere((element) => element.isActive == true).accountId, transfer.transferID);
                           }, child: const Text('Xoá')),
                         ],
                       );
                     },
-                  ).whenComplete(() =>  Navigator.pop(context));
+                  ).then((value) {
+                    if(value){
+                      Navigator.pop(context);
+                    }
+                  });
                 },
                 child: const Text('XOÁ',style: TextStyle(color: Colors.red),),
               )
