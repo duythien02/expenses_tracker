@@ -399,9 +399,6 @@ class _TransferDataTableState extends State<TransferDataTable> {
                       child: const Center(child: CircularProgressIndicator(),)
                     );
                   }
-                  if(transfer.hasError){
-                    print(transfer.error);
-                  }
                   if(transfer.hasData){
                     transferData = transfer.data!;
                     if(filteredExpense(typeTime).isEmpty){

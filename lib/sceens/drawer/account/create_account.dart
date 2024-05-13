@@ -331,15 +331,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 fontSize: 16,),
                             ),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
+                              TextButton(onPressed: () => Navigator.pop(context,false), child: const Text('Huỷ')),
                               TextButton(onPressed: () async {
-                                Navigator.pop(context);
+                                Navigator.pop(context,true);
                                 await FirebaseAPI.deleteAccount(widget.account!.accountId);
                               }, child: const Text('Xoá')),
                             ],
                           );
                         },
-                      ).whenComplete(() => Navigator.pop(context,widget.account!.isActive));
+                      ).then((value) {
+                        if(value){
+                          Navigator.pop(context);
+                        }
+                      });
                     },
                     child: const Text('XOÁ',style: TextStyle(color: Colors.red,fontSize: 18),),
                   ),
