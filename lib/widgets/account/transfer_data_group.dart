@@ -4,9 +4,10 @@ import 'package:expenses_tracker_app/widgets/account/transfer_data.dart';
 import 'package:flutter/material.dart';
 
 class TransferDataGroup extends StatelessWidget {
-  const TransferDataGroup({super.key, required this.listTransfer, required this.listAccount});
+  const TransferDataGroup({super.key, required this.listTransfer, required this.listAccount, required this.activeAccount});
   final List<Transfer> listTransfer;
   final List<Account> listAccount;
+  final Account activeAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +20,12 @@ class TransferDataGroup extends StatelessWidget {
             if(index != listTransfer.length - 1 && listTransfer.length >= 2){
               return Column(
                 children: [
-                  TransferData(transfer: listTransfer[index], listAccount: listAccount,),
+                  TransferData(transfer: listTransfer[index], listAccount: listAccount,activeAccount: activeAccount,),
                   Divider(height: 5, color: Colors.grey[300],)
                 ],
               );
             }else{
-              return TransferData(transfer: listTransfer[index],listAccount: listAccount,);
+              return TransferData(transfer: listTransfer[index],listAccount: listAccount,activeAccount: activeAccount,);
             }
           }
         )

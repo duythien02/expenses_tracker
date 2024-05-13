@@ -329,8 +329,12 @@ class FirebaseAPI {
       transferID: uuid.v4(),
       fromAccountId: fromAccount.accountId,
       fromAccountName: fromAccount.accountName,
+      fromAccountSymbol: fromAccount.symbol,
+      fromAccountColor: fromAccount.color,
       toAccountId: toAccount?.accountId,
       toAccountName: toAccount?.accountName,
+      toAccountSymbol: toAccount?.symbol,
+      toAccountColor: toAccount?.color,
       amount: amount,
       currencyLocal: fromAccount.currencyLocale,
       createdAt: createAt,
@@ -391,5 +395,16 @@ class FirebaseAPI {
       }
       return groupedTransfer;
     });
+  }
+
+  static Future<void> deleteTransfer(String accountId, String transferId) async{
+    return await firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('accounts')
+      .doc(accountId)
+      .collection('transfer')
+      .doc(transferId)
+      .delete();
   }
 }

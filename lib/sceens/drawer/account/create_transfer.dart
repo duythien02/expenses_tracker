@@ -8,8 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class CreateTransfer extends StatefulWidget {
-  CreateTransfer({
+class CreateTransferScreen extends StatefulWidget {
+  CreateTransferScreen({
     super.key,
     required this.listAccount,
     required this.currency,
@@ -18,10 +18,10 @@ class CreateTransfer extends StatefulWidget {
   Currency currency;
 
   @override
-  State<CreateTransfer> createState() => _CreateTransferState();
+  State<CreateTransferScreen> createState() => _CreateTransferScreenState();
 }
 
-class _CreateTransferState extends State<CreateTransfer> {
+class _CreateTransferScreenState extends State<CreateTransferScreen> {
   final formKey = GlobalKey<FormState>();
   TextEditingController amount = TextEditingController();
   TextEditingController note = TextEditingController();

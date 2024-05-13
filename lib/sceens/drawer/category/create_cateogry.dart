@@ -305,7 +305,7 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                       } else {
                         return GestureDetector(
                           onTap: () async {
-                            var newIcon = await Navigator.push(context,MaterialPageRoute(builder: (context) => IconRepo(color: colorPicker,)));
+                            var newIcon = await Navigator.push(context,MaterialPageRoute(builder: (context) => IconRepoScreen(color: colorPicker,)));
                             if (newIcon != null) {
                               setState(() {
                                 icon = newIcon;

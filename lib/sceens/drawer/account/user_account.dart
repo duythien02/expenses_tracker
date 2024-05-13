@@ -67,7 +67,7 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
       ),
       body: Padding(
         padding:
-            const EdgeInsets.only(bottom: 12, top: 24, left: 12, right: 12),
+            const EdgeInsets.only(bottom: 32, top: 24, left: 12, right: 12),
         child: Column(
           children: [
             Row(
@@ -77,9 +77,14 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   width: (MediaQuery.of(context).size.width - 24) / 2,
                   child: Column(
                     children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(context,MaterialPageRoute(builder: (context) => TransferHistory(account: widget.account, listAccount: listAccount,)));
+                      GestureDetector(
+                        onTap: () async {
+                          var transfer = await Navigator.push(context,MaterialPageRoute(builder: (context) => TransferHistoryScreen(account: widget.account, listAccount: listAccount,currency: currency,)));
+                          if (transfer == true) {
+                            setState(() {
+                              getListAccount = FirebaseAPI.getListAccount();
+                            });
+                          }
                         },
                         child: Container(
                           height: 50,
@@ -108,9 +113,9 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   width: (MediaQuery.of(context).size.width - 24) / 2,
                   child: Column(
                     children: [
-                      InkWell(
+                      GestureDetector(
                         onTap: () async {
-                          var transfer = await Navigator.push(context,MaterialPageRoute(builder: (context) => CreateTransfer(listAccount: listAccount,currency: currency,),),);
+                          var transfer = await Navigator.push(context,MaterialPageRoute(builder: (context) => CreateTransferScreen(listAccount: listAccount,currency: currency,),),);
                           if(transfer != null){
                             setState(() {
                               getListAccount = FirebaseAPI.getListAccount();

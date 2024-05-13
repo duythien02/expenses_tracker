@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 
 // ignore: must_be_immutable
-class IconRepo extends StatelessWidget {
-  IconRepo({super.key, required this.color});
+class IconRepoScreen extends StatelessWidget {
+  IconRepoScreen({super.key, required this.color});
   final Color color;
 
   late CustomIcon pickedIcon;
