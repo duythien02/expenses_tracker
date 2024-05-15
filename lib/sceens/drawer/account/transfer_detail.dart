@@ -55,7 +55,11 @@ class TransferDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12,),
-                Text(transfer.fromAccountName, style: const TextStyle(color: Colors.black)) 
+                Text(
+                  listAccount.indexWhere((element) => element.accountId == transfer.fromAccountId) == -1
+                    ? '${transfer.fromAccountName} (đã xoá)'
+                    : transfer.fromAccountName,
+                  style: const TextStyle(color: Colors.black)) 
               ],
             ),
             if(transfer.toAccountId != null)
@@ -83,7 +87,11 @@ class TransferDetailScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12,),
-                    Text(transfer.toAccountName!, style: const TextStyle(color: Colors.black)) 
+                    Text(
+                      listAccount.indexWhere((element) => element.accountId == transfer.toAccountId) == -1
+                        ? '${transfer.toAccountName!} (đã xoá)'
+                        : transfer.toAccountName!,
+                      style: const TextStyle(color: Colors.black)) 
                   ],
                 ),
               ],
@@ -129,7 +137,7 @@ class TransferDetailScreen extends StatelessWidget {
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(context,false), child: const Text('Huỷ')),
                           TextButton(onPressed: () async {
-                            Navigator.pop(context,true);
+                            Navigator.pop(context);
                             await FirebaseAPI.deleteTransfer(listAccount.firstWhere((element) => element.isActive == true).accountId, transfer.transferID);
                           }, child: const Text('Xoá')),
                         ],
@@ -137,7 +145,7 @@ class TransferDetailScreen extends StatelessWidget {
                     },
                   ).then((value) {
                     if(value){
-                      Navigator.pop(context);
+                      Navigator.pop(context,true);
                     }
                   });
                 },

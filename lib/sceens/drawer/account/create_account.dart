@@ -333,7 +333,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             actions: [
                               TextButton(onPressed: () => Navigator.pop(context,false), child: const Text('Huỷ')),
                               TextButton(onPressed: () async {
-                                Navigator.pop(context,true);
+                                Navigator.pop(context);
                                 await FirebaseAPI.deleteAccount(widget.account!.accountId);
                               }, child: const Text('Xoá')),
                             ],
@@ -341,7 +341,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         },
                       ).then((value) {
                         if(value){
-                          Navigator.pop(context);
+                          Navigator.pop(context,true);
                         }
                       });
                     },
