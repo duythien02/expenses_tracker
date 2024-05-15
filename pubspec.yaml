@@ -55,6 +55,8 @@ dependencies:
   flutter_local_notifications: ^17.1.0
   timezone: ^0.9.3
   onesignal_flutter: ^5.1.5
+  flutter_dotenv: ^5.1.0
+  http: ^1.2.0
 
 flutter_launcher_icons:
   android: "ic_launcher"
@@ -88,6 +90,7 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/user_avatar.png
+    - .env
   fonts:
     - family: MyIcon
       fonts:
