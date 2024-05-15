@@ -1,3 +1,4 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:expenses_tracker_app/main.dart';
 import 'package:expenses_tracker_app/models/account.dart';
 import 'package:expenses_tracker_app/models/expese.dart';
@@ -5,6 +6,7 @@ import 'package:expenses_tracker_app/models/user.dart';
 import 'package:expenses_tracker_app/sceens/drawer/account/user_account.dart';
 import 'package:expenses_tracker_app/sceens/drawer/chart/chart.dart';
 import 'package:expenses_tracker_app/sceens/drawer/chat/chat.dart';
+import 'package:expenses_tracker_app/sceens/drawer/converter/currency_converter.dart';
 import 'package:expenses_tracker_app/sceens/drawer/profile/profile.dart';
 import 'package:expenses_tracker_app/sceens/drawer/category/user_categories.dart';
 import 'package:expenses_tracker_app/widgets/drawer/item_drawer.dart';
@@ -78,6 +80,11 @@ class MainDrawer extends StatelessWidget {
               destination: ChatScreen(expenseData: expenseData,account: account),
               icon: Icons.message,
               title: 'Chat',
+            ),
+            ItemDrawer(
+              destination: CurrencyConverterScreen(expenseData: expenseData,account: account),
+              icon: EvaIcons.swap,
+              title: 'Chuyển đổi tiền tệ',
             ),
           ],
         ),

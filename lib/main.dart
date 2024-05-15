@@ -6,9 +6,11 @@ import 'package:expenses_tracker_app/sceens/auth/auth.dart';
 import 'package:expenses_tracker_app/sceens/home/home.dart';
 import 'package:expenses_tracker_app/sceens/welcome/sync_data.dart';
 import 'package:expenses_tracker_app/sceens/welcome/welcome1.dart';
+//import 'package:expenses_tracker_app/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 var kColorScheme =
@@ -19,6 +21,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  //await NotificationService.init();
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

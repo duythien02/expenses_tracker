@@ -1,7 +1,7 @@
 import 'package:expenses_tracker_app/models/currency.dart';
 
 List<Currency> currencies = [
-  Currency(name: 'Việt Nam Đồng', code: 'VNĐ', picked: true, locale: 'vi_VN'),
+  Currency(name: 'Việt Nam Đồng', code: 'VND', picked: true, locale: 'vi_VN'),
   Currency(name: 'Đô la Mỹ', code: 'USD', picked: false, locale: 'en_US'),
   Currency(name: 'Euro', code: 'EUR', picked: false, locale: 'fr_FR'),
   Currency(name: 'Bảng Anh', code: 'GBP', picked: false, locale: 'en_GB'),
