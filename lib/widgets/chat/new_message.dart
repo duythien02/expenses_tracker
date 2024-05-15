@@ -1,5 +1,6 @@
 import 'package:expenses_tracker_app/firebase/firebase.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class NewMessage extends StatefulWidget {
@@ -12,8 +13,6 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
 
   final _textController = TextEditingController();
-
-  final apiKey = "AIzaSyCOGuX8yuclklsQRQu19FzAzrx62hplmjY";
 
   @override
   void dispose() {
@@ -34,7 +33,7 @@ class _NewMessageState extends State<NewMessage> {
     _textController.clear();
     await FirebaseAPI.sendTextInChat(enteredMessage, FirebaseAPI.user.uid);
 
-    final model = GenerativeModel(model: "gemini-pro", apiKey: apiKey);
+    final model = GenerativeModel(model: "gemini-pro", apiKey: dotenv.env["GEMINI_API_KEY"]!);
 
     final respone = await model.generateContent([content]);
 
