@@ -14,6 +14,14 @@ class _NewMessageState extends State<NewMessage> {
 
   final _textController = TextEditingController();
 
+  late List<Content> listContent;
+
+  @override
+  void initState() {
+    super.initState();
+    listContent = [];
+  }
+
   @override
   void dispose() {
     _textController.dispose();
@@ -23,7 +31,9 @@ class _NewMessageState extends State<NewMessage> {
   void _talkWithGemini() async {
     final enteredMessage = _textController.text;
 
-    final content = Content.text(enteredMessage);
+    Content content = Content.text(enteredMessage);
+
+    listContent.add(content);
 
     if(enteredMessage.trim().isEmpty){
       return;
@@ -34,9 +44,12 @@ class _NewMessageState extends State<NewMessage> {
     await FirebaseAPI.sendTextInChat(enteredMessage, FirebaseAPI.user.uid);
 
     final model = GenerativeModel(model: "gemini-pro", apiKey: dotenv.env["GEMINI_API_KEY"]!);
+    
+    final chat = model.startChat(
+      history: listContent
+    );
 
-    final respone = await model.generateContent([content]);
-
+    final respone = await chat.sendMessage(content);
     await FirebaseAPI.sendTextInChat(respone.text ?? "", "gemini-pro");
   }
 

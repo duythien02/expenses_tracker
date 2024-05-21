@@ -245,7 +245,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       textCapitalization: TextCapitalization.none,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Chưa nhập tên danh mục';
+                          return 'Chưa nhập tên tài khoản';
                         }
                         return null;
                       },

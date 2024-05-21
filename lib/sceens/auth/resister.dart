@@ -105,6 +105,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                     autofocus: true,
                     controller: _email,
                     style: const TextStyle(fontSize: 18),
+                    maxLength: 30,
                     decoration: const InputDecoration(
                       errorStyle: TextStyle(fontSize: 14),
                       hintText: "Email",
@@ -135,6 +136,7 @@ class _ResisterScreenState extends State<RegisterScreen> {
                     focusNode: _userNameFocusNode,
                     controller: _userName,
                     style: const TextStyle(fontSize: 18),
+                    maxLength: 50,
                     decoration: const InputDecoration(
                       errorStyle: TextStyle(fontSize: 14),
                       hintText: "Tên người dùng",

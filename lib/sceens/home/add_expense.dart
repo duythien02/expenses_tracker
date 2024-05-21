@@ -112,10 +112,10 @@ class _AddExpenseState extends State<AddExpenseScreen> {
     }
   }
 
-  String moneyFormat(double number) {
+  String moneyFormat(Account account) {
     var format = NumberFormat.simpleCurrency(
-        locale: widget.currentAccount.currencyLocale); 
-    return format.format(number);
+        locale: account.currencyLocale); 
+    return format.format(account.accountBalance);
   }
 
   @override
@@ -227,6 +227,8 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                               inputFormatters: [
                                 FilteringTextInputFormatter.deny(RegExp('-')),
                                 FilteringTextInputFormatter.deny(RegExp(',')),
+                                if(!currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode))
+                                 FilteringTextInputFormatter.allow(RegExp(r"\d+([\.]\d+)?")),
                               ],
                               validator: (value) {
                                 if (value == null || value.isEmpty){
@@ -298,8 +300,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                                     ),
                                                     subtitle: Text(moneyFormat(
                                                         widget
-                                                            .listAccount![index]
-                                                            .accountBalance)),
+                                                            .listAccount![index])),
                                                     value: widget.listAccount![index],
                                                     groupValue: widget.currentAccount,
                                                     onChanged: (value) {
@@ -406,6 +407,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                                 if(value[0].type == true){
                                                   setState(() {
                                                     widget.isExpense = true;
+                                                    isCategoryPicked = true;
                                                   });
                                                 }else{
                                                   setState(() {

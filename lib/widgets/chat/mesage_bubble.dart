@@ -1,16 +1,16 @@
 import 'package:expenses_tracker_app/main.dart';
+import 'package:expenses_tracker_app/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
     super.key,
     required this.message,
     required this.isMe,
-    required this.nextMessageFromGemini
   });
 
-  final bool nextMessageFromGemini;
-  final String message;
+  final ChatMessage message;
   final bool isMe;
 
   @override
@@ -26,7 +26,19 @@ class MessageBubble extends StatelessWidget {
                 crossAxisAlignment:
                     isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 6),
+                  Padding(
+                      padding: const EdgeInsets.only(
+                        left: 13,
+                        right: 13,
+                      ),
+                      child: Text(
+                        isMe ? DateFormat.jm().format(message.createAt) : 'Gemini, ${DateFormat.jm().format(message.createAt)}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                   Container(
                     decoration: BoxDecoration(
                       color: isMe
@@ -53,7 +65,7 @@ class MessageBubble extends StatelessWidget {
                       horizontal: 12,
                     ),
                     child: Text(
-                      message,
+                      message.text,
                       style: TextStyle(
                         height: 1.3,
                         color: isMe
