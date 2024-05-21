@@ -105,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textCapitalization: TextCapitalization.none,
+                    maxLength: 30,
                     onFieldSubmitted: (text) => FocusScope.of(context).requestFocus(_passFocusNode),
                     validator: (value) {
                       if (value == null ||
