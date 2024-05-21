@@ -1,10 +1,38 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:expenses_tracker_app/firebase/firebase.dart';
+import 'package:expenses_tracker_app/models/message.dart';
 import 'package:expenses_tracker_app/widgets/chat/mesage_bubble.dart';
 import 'package:flutter/material.dart';
 
-class ChatMessage extends StatelessWidget {
-  const ChatMessage({super.key});
+class Chat extends StatelessWidget {
+  const Chat({super.key});
+
+  String formatTime(DateTime currentChatMessageTime){
+
+    Duration duration = currentChatMessageTime.difference(DateTime.now());
+    
+    if(duration.inDays > 1){
+      return '${currentChatMessageTime.day} - ${currentChatMessageTime.month} - ${currentChatMessageTime.year}';
+    }else{
+      return 'Hôm nay';
+    }
+  }
+
+  Widget dividerTime(DateTime currentChatMessageTime){
+    return Row(
+    children: [
+        const Expanded(
+            child: Divider()
+        ),
+        const SizedBox(width: 10,),
+        Text(formatTime(currentChatMessageTime),style: const TextStyle(color: Colors.black),),
+        const SizedBox(width: 10,),
+        const Expanded(
+            child: Divider()
+        ),
+    ]
+);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +54,10 @@ class ChatMessage extends StatelessWidget {
         }
     
         final loadedMessages = chatSnapshots.data!.docs;
+
+        List<ChatMessage> listChatMessages= [];
+
+        listChatMessages = loadedMessages.map((e) => ChatMessage.fromMap(e.data())).toList();
     
         return ListView.builder(
           padding: const EdgeInsets.only(
@@ -34,20 +66,41 @@ class ChatMessage extends StatelessWidget {
             right: 0,
           ),
           reverse: true,
-          itemCount: loadedMessages.length,
+          itemCount: listChatMessages.length,
           itemBuilder: (ctx,index){
-            final chatMessage = loadedMessages[index].data();
-            // final nextChatMessage = index - 1 >= 0
-            //     ? loadedMessages[index - 1].data()
-            //     : null;
-            final currentMessageUserId = chatMessage['from'];
-            if(index - 1 < 0  && currentMessageUserId == FirebaseAPI.user.uid){
+            final chatMessage = listChatMessages[index];
+
+            final nextChatMessage = index + 1 < listChatMessages.length
+              ? listChatMessages[index + 1]
+              : null;
+
+            DateTime currentMessageTime = chatMessage.createAt;
+            DateTime? nextMessageTime = nextChatMessage?.createAt;
+
+
+            final currentMessageFrom = chatMessage.from;
+            
+            if(nextChatMessage != null){
+              Duration difference = currentMessageTime.difference(nextMessageTime!);
+              int day = difference.inDays;
+              if(day > 1){
+                return Column(
+                  children: [
+                    dividerTime(currentMessageTime),
+                    MessageBubble(
+                      message: chatMessage,
+                      isMe: FirebaseAPI.user.uid == currentMessageFrom,
+                    ),
+                  ],
+                );
+              }
+            }
+            if(index - 1 < 0  && currentMessageFrom == FirebaseAPI.user.uid){
               return Column(
                 children: [
                   MessageBubble(
-                    message: chatMessage['text'],
-                    isMe: FirebaseAPI.user.uid == currentMessageUserId,
-                    nextMessageFromGemini: false,
+                    message: chatMessage,
+                    isMe: FirebaseAPI.user.uid == currentMessageFrom,
                   ),
                   AnimatedTextKit(
                     animatedTexts: [
@@ -65,9 +118,8 @@ class ChatMessage extends StatelessWidget {
               );
             }
             return MessageBubble(
-              message: chatMessage['text'],
-              isMe: FirebaseAPI.user.uid == currentMessageUserId,
-              nextMessageFromGemini: false,
+              message: chatMessage,
+              isMe: FirebaseAPI.user.uid == currentMessageFrom,
             );
           }
         );
