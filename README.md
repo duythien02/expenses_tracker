@@ -34,7 +34,7 @@ Application Features:
 - [ ] **Other utilities**
   - [x] Chat with AI
   - [x] Analyze expenses, income and display it as a chart
-  - [ ] Transfer money between accounts
+  - [x] Transfer money between accounts
 ## Plugins
 
 For this project you have to add two plugins:
