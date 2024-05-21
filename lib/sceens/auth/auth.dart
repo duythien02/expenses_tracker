@@ -9,13 +9,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
-  _handleGoogleBtnClick(BuildContext context) {
-    showDialog(context: context, builder: (_) => const Center(child: CircularProgressIndicator(),));
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  
+  _handleGoogleBtnClick() {
     _signInWithGoogle().then((user) async {
-      Navigator.pop(context);
       if (user != null && user.additionalUserInfo!.isNewUser) {
         await FirebaseAPI.createNewUser(
           FirebaseAPI.user.displayName!,
@@ -112,9 +116,7 @@ class AuthScreen extends StatelessWidget {
                     color: Colors.black),
               ),
               IconButton(
-                onPressed: () {
-                  _handleGoogleBtnClick(context);
-                },
+                onPressed: _handleGoogleBtnClick,
                 icon: const Icon(EvaIconData(0xeaec)),
               ),
               const SizedBox(
