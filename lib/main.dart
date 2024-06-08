@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           ),
           datePickerTheme: DatePickerThemeData(
               headerBackgroundColor: kColorScheme.primary,
-              headerForegroundColor: kColorScheme.background),
+              headerForegroundColor: kColorScheme.surface),
           appBarTheme: const AppBarTheme().copyWith(
             backgroundColor: kColorScheme.primary,
             foregroundColor: kColorScheme.onPrimary,
@@ -84,16 +84,19 @@ class MyApp extends StatelessWidget {
                   }
                   if (snapshot.data!.docs.isNotEmpty) {
                     final data = snapshot.data!.docs;
-                    List<Account> listAccount = data.map((e) => Account.fromMap(e.data())).toList();
-                    Account? currentAccount = listAccount.firstWhereOrNull((element) => element.isActive == true);
-                    if(currentAccount == null){
+                    List<Account> listAccount =
+                        data.map((e) => Account.fromMap(e.data())).toList();
+                    Account? currentAccount = listAccount.firstWhereOrNull(
+                        (element) => element.isActive == true);
+                    if (currentAccount == null) {
                       return const SyncDataScreen();
                     }
                     return StreamBuilder(
                         stream: FirebaseAPI.getGroupedExpensesStream(
                             currentAccount),
                         builder: (context, expense) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const SyncDataScreen();
                           }
                           if (expense.hasData) {

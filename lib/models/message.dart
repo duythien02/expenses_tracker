@@ -1,10 +1,10 @@
-class ChatMessage{
+class ChatMessage {
   late String messageId;
   late String text;
   late String from;
   late DateTime createAt;
 
-    ChatMessage({
+  ChatMessage({
     required this.messageId,
     required this.text,
     required this.from,

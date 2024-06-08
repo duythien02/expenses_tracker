@@ -17,17 +17,28 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  
   _handleGoogleBtnClick() {
+    _loading();
     _signInWithGoogle().then((user) async {
+      Navigator.pop(context);
       if (user != null && user.additionalUserInfo!.isNewUser) {
         await FirebaseAPI.createNewUser(
           FirebaseAPI.user.displayName!,
           FirebaseAPI.user.email!,
           FirebaseAPI.user.photoURL,
-          );
+        );
       }
     });
+  }
+
+  _loading() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
   Future<UserCredential?> _signInWithGoogle() async {
@@ -69,7 +80,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               const Text(
                 'Đăng ký để lưu thông tin của bạn',
-                style: TextStyle(fontSize: 22,color: Colors.black),
+                style: TextStyle(fontSize: 22, color: Colors.black),
               ),
               const SizedBox(
                 height: 24,
