@@ -28,7 +28,7 @@ class IconRepoScreen extends StatelessWidget {
               itemBuilder: (context, index1) => StickyHeader(
                 header: Container(
                   width: double.infinity,
-                  color: kColorScheme.background,
+                  color: kColorScheme.surface,
                   child: Padding(
                     padding:
                         const EdgeInsets.only(left: 20, top: 12, bottom: 10),
@@ -54,12 +54,15 @@ class IconRepoScreen extends StatelessWidget {
                         return GestureDetector(
                           onTap: () {
                             customIcon.forEach((key, value) {
-                                for (var icon in value) {
-                                  icon.picked = false;
-                                }
-                              });
+                              for (var icon in value) {
+                                icon.picked = false;
+                              }
+                            });
                             listIcon[index].picked = true;
-                            Navigator.pop(context,listIcon.firstWhere((icon) => icon.picked == true));
+                            Navigator.pop(
+                                context,
+                                listIcon
+                                    .firstWhere((icon) => icon.picked == true));
                           },
                           child: CustomIconItem(
                             icon: listIcon[index],

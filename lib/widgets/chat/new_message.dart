@@ -11,7 +11,6 @@ class NewMessage extends StatefulWidget {
 }
 
 class _NewMessageState extends State<NewMessage> {
-
   final _textController = TextEditingController();
 
   late final ChatSession chat;
@@ -19,8 +18,9 @@ class _NewMessageState extends State<NewMessage> {
   @override
   void initState() {
     super.initState();
-    final model = GenerativeModel(model: "gemini-pro", apiKey: dotenv.env["GEMINI_API_KEY"]!);
-    
+    final model = GenerativeModel(
+        model: "gemini-pro", apiKey: dotenv.env["GEMINI_API_KEY"]!);
+
     chat = model.startChat();
   }
 
@@ -35,7 +35,7 @@ class _NewMessageState extends State<NewMessage> {
 
     Content content = Content.text(enteredMessage);
 
-    if(enteredMessage.trim().isEmpty){
+    if (enteredMessage.trim().isEmpty) {
       return;
     }
 
@@ -50,12 +50,11 @@ class _NewMessageState extends State<NewMessage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16,right: 16, bottom: 14),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 14),
       child: Row(
         children: [
           Expanded(
             child: TextFormField(
-              autofocus: true,
               controller: _textController,
               textCapitalization: TextCapitalization.sentences,
               autocorrect: true,

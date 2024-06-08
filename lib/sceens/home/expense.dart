@@ -23,10 +23,13 @@ class ExpenseScreen extends StatelessWidget {
   Map<DateTime, List<Expense>> groupBydate() {
     Map<DateTime, List<Expense>> groupedExpenses = {};
     for (var expense in listExpense) {
-      DateTime date = DateTime(expense.date.year, expense.date.month, expense.date.day);
+      DateTime date =
+          DateTime(expense.date.year, expense.date.month, expense.date.day);
       groupedExpenses.putIfAbsent(date, () => []).add(expense);
     }
-    Map<DateTime, List<Expense>> sortedGroupedExpenses = Map.fromEntries(groupedExpenses.entries.toList()..sort((e1, e2) => e2.key.compareTo(e1.key)));
+    Map<DateTime, List<Expense>> sortedGroupedExpenses = Map.fromEntries(
+        groupedExpenses.entries.toList()
+          ..sort((e1, e2) => e2.key.compareTo(e1.key)));
     return sortedGroupedExpenses;
   }
 
@@ -34,7 +37,7 @@ class ExpenseScreen extends StatelessWidget {
     return '${list[0].date.day} Tháng ${list[0].date.month}, ${list[0].date.year}';
   }
 
-  String moneyFormat(){
+  String moneyFormat() {
     var format = NumberFormat.simpleCurrency(locale: account.currencyLocale);
     return format.format(getTotalExpense());
   }
@@ -67,12 +70,13 @@ class ExpenseScreen extends StatelessWidget {
             itemBuilder: (context, index) => StickyHeader(
                 header: Container(
                   width: double.infinity,
-                  color: kColorScheme.background,
+                  color: kColorScheme.surface,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: Text(
                       formatDate(groupBydate().values.elementAt(index)),
-                      style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          color: Colors.grey[600], fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),

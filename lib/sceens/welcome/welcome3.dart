@@ -22,7 +22,7 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
   bool isSubmited = false;
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     balance.dispose();
   }
@@ -37,15 +37,14 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
       isSubmited = true;
     });
     await FirebaseAPI.completeRegistration(
-          'Chính',
-          double.parse(balance.text),
-          widget.currency.code,
-          widget.currency.name,
-          widget.currency.locale,
-          "0xe808",
-          4285132974)
-      .then((value) => Navigator.popUntil(context, (route) => route.isFirst));
-  
+            'Chính',
+            double.parse(balance.text),
+            widget.currency.code,
+            widget.currency.name,
+            widget.currency.locale,
+            "0xe808",
+            4285132974)
+        .then((value) => Navigator.popUntil(context, (route) => route.isFirst));
   }
 
   @override
@@ -97,7 +96,7 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                             decoration: InputDecoration(
                               counterText: '',
                               filled: true,
-                              fillColor: kColorScheme.background,
+                              fillColor: kColorScheme.surface,
                               hintStyle: const TextStyle(color: Colors.grey),
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 0, horizontal: 0),
@@ -106,21 +105,26 @@ class _WelcomScreen3State extends State<WelcomScreen3> {
                               FilteringTextInputFormatter.deny(RegExp(',')),
                             ],
                             validator: (value) {
-                              if (value == null || value.isEmpty){
+                              if (value == null || value.isEmpty) {
                                 return 'Vui lòng nhập số dư';
-                              }else if(double.tryParse(value) == null ||  (value.contains('.') && value.split('.')[1].length > 2)){
+                              } else if (double.tryParse(value) == null ||
+                                  (value.contains('.') &&
+                                      value.split('.')[1].length > 2)) {
                                 return 'Số dư không hợp lệ';
                               }
                               return null;
                             },
-                            onSaved: (value){
-                              if(currenciesCodeHasDecimal.contains(widget.currency.code)){
-                                  balance.text = value!.trim();
-                                }else{
-                                  balance.text = value!.split('.')[0];
-                                }
+                            onChanged: (value) {},
+                            onSaved: (value) {
+                              if (currenciesCodeHasDecimal
+                                  .contains(widget.currency.code)) {
+                                balance.text = value!.trim();
+                              } else {
+                                balance.text = value!.split('.')[0];
+                              }
                             },
-                            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                            onTapOutside: (event) =>
+                                FocusScope.of(context).unfocus(),
                           ),
                         ),
                       ),

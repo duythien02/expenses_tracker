@@ -321,10 +321,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return total;
   }
 
-  String moneyFormat(double number) {
+  String moneyFormat(Account account) {
     var format = NumberFormat.simpleCurrency(
-        locale: widget.currentAccount.currencyLocale);
-    return format.format(number);
+        locale: account.currencyLocale);
+    return format.format(account.accountBalance);
   }
 
   double getTotalCostsExpenseCard(List<Expense> expenses) {
@@ -365,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w400),
                                   ),
-                                  subtitle: Text(moneyFormat(widget.listAccount[index].accountBalance)),
+                                  subtitle: Text(moneyFormat(widget.listAccount[index])),
                                   value: widget.listAccount[index],
                                   groupValue: widget.currentAccount,
                                   onChanged: (value) async {
@@ -493,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    moneyFormat(widget.currentAccount.accountBalance),
+                    moneyFormat(widget.currentAccount),
                     style: TextStyle(color: widget.currentAccount.accountBalance >= 0 ? Colors.white : Colors.red, fontSize: 22),
                   ),
                   const SizedBox(

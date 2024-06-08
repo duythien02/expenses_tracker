@@ -16,7 +16,8 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 // ignore: must_be_immutable
 class CreateAccountScreen extends StatefulWidget {
-  CreateAccountScreen({super.key, required this.currency, required this.account});
+  CreateAccountScreen(
+      {super.key, required this.currency, required this.account});
   Currency currency;
   Account? account;
 
@@ -44,24 +45,36 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     setState(() {
       isSubmited = true;
     });
-    if(widget.account != null && double.parse(balance.text) != widget.account!.accountBalance){
-      double difference = double.parse(balance.text) - widget.account!.accountBalance;
-      await FirebaseAPI.setTransfer(widget.account!, null, difference, DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day), null, TransferType.change.name);
+    if (widget.account != null &&
+        double.parse(balance.text) != widget.account!.accountBalance) {
+      double difference =
+          double.parse(balance.text) - widget.account!.accountBalance;
+      await FirebaseAPI.setTransfer(
+          widget.account!,
+          null,
+          difference,
+          DateTime.utc(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day),
+          null,
+          TransferType.change.name);
     }
-      return await FirebaseAPI.setAccount(
+    return await FirebaseAPI.setAccount(
             widget.account?.accountId,
             accountName.text,
             double.parse(balance.text),
             widget.currency.code,
             widget.currency.name,
             widget.currency.locale,
-            listIconAccount.firstWhere((element) => element.picked == true).iconData.codePoint.toString(),
+            listIconAccount
+                .firstWhere((element) => element.picked == true)
+                .iconData
+                .codePoint
+                .toString(),
             colorPicker.value,
             widget.account?.isMain,
             widget.account?.isActive,
-            widget.account?.createAt
-            )
-        .whenComplete(() => Navigator.pop(context,false));
+            widget.account?.createAt)
+        .whenComplete(() => Navigator.pop(context, false));
   }
 
   @override
@@ -73,22 +86,31 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     for (var color in colors) {
       color.isSelected = false;
     }
-    listColors = colors.sublist(0,colors.length);
+    listColors = colors.sublist(0, colors.length);
     listIconAccount = listIconForAccount;
-    if(widget.account != null){
-      widget.currency = currencies.firstWhere((element) => element.code == widget.account!.currencyCode);
+    if (widget.account != null) {
+      widget.currency = currencies.firstWhere(
+          (element) => element.code == widget.account!.currencyCode);
       isIconPicked = true;
       if (!currenciesCodeHasDecimal.contains(widget.account!.currencyCode)) {
         balance.text = widget.account!.accountBalance.toStringAsFixed(0);
-      }else{
+      } else {
         balance.text = widget.account!.accountBalance.toStringAsFixed(2);
       }
       colorPicker = Color(widget.account!.color);
-      MyColorPicker categoryColor = MyColorPicker(color: colorPicker,isSelected: true);
-      listIconAccount.elementAt(listIconAccount.indexWhere((element) => element.iconData.codePoint == int.parse(widget.account!.symbol))).picked = true;
-      if(listColors.indexWhere((element) => element.color.value == categoryColor.color.value) > - 1){
-        listColors[listColors.indexWhere((element) => element.color.value == categoryColor.color.value)].isSelected = true;
-      }else{
+      MyColorPicker categoryColor =
+          MyColorPicker(color: colorPicker, isSelected: true);
+      listIconAccount
+          .elementAt(listIconAccount.indexWhere((element) =>
+              element.iconData.codePoint == int.parse(widget.account!.symbol)))
+          .picked = true;
+      if (listColors.indexWhere(
+              (element) => element.color.value == categoryColor.color.value) >
+          -1) {
+        listColors[listColors.indexWhere(
+                (element) => element.color.value == categoryColor.color.value)]
+            .isSelected = true;
+      } else {
         listColors.insert(0, categoryColor);
         listColors.removeLast();
       }
@@ -103,7 +125,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     accountName.dispose();
   }
 
-    showPickerColor() {
+  showPickerColor() {
     return showDialog(
       context: context,
       builder: (context) => SizedBox(
@@ -127,8 +149,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() {
-                    if (colors.indexWhere((element) => element.isSelected == true) >=0) {
-                      colors.elementAt(colors.indexWhere((element) => element.isSelected == true)).isSelected = false;
+                    if (colors.indexWhere(
+                            (element) => element.isSelected == true) >=
+                        0) {
+                      colors
+                          .elementAt(colors.indexWhere(
+                              (element) => element.isSelected == true))
+                          .isSelected = false;
                     }
                     colorPicker = tempColor;
                     colors[0].color = colorPicker;
@@ -146,7 +173,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: widget.account != null ? const Text('Chỉnh sửa tài khoản') : const Text('Thêm tài khoản'),
+        title: widget.account != null
+            ? const Text('Chỉnh sửa tài khoản')
+            : const Text('Thêm tài khoản'),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
@@ -158,198 +187,238 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Spacer(),
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          width: 120,
-                          height: 70,
-                          child: TextFormField(
-                            controller: balance,
-                            maxLength: 15,
-                            autofocus: true,
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 20),
-                            decoration: InputDecoration(
-                              counterText: '',
-                              filled: true,
-                              fillColor: kColorScheme.background,
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 0),
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.deny(RegExp(',')),
-                            ],
-                            validator: (value) {
-                              if (value == null || value.isEmpty){
-                                return 'Vui lòng nhập số dư';
-                              }else if(double.tryParse(value) == null ||  (value.contains('.') && value.split('.')[1].length > 2)){
-                                return 'Số dư không hợp lệ';
-                              }
-                              return null;
-                            },
-                            onSaved: (value){
-                              if(currenciesCodeHasDecimal.contains(widget.currency.code)){
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Spacer(),
+                          Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            width: 120,
+                            height: 70,
+                            child: TextFormField(
+                              controller: balance,
+                              maxLength: 15,
+                              //autofocus: true,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 20),
+                              decoration: InputDecoration(
+                                counterText: '',
+                                filled: true,
+                                fillColor: kColorScheme.surface,
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 0),
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(RegExp(',')),
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Vui lòng nhập số dư';
+                                } else if (double.tryParse(value) == null ||
+                                    (value.contains('.') &&
+                                        value.split('.')[1].length > 2)) {
+                                  return 'Số dư không hợp lệ';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                if (currenciesCodeHasDecimal
+                                    .contains(widget.currency.code)) {
                                   balance.text = value!.trim();
-                                }else{
+                                } else {
                                   balance.text = value!.split('.')[0];
                                 }
-                            },
-                            onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                              },
+                              onTapOutside: (event) =>
+                                  FocusScope.of(context).unfocus(),
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: widget.account != null ? null : () async {
-                              Currency? cur = await Navigator.push(context, MaterialPageRoute(builder: (context) => PickCurrencyScreen(currency: widget.currency,)));
-                              if(cur != null){
-                                setState(() {
-                                  widget.currency = cur;
-                                });
-                              }
-                            },
-                            child: Text(widget.currency.code,
-                              style: TextStyle(
-                                color: widget.account != null ? Colors.black : kColorScheme.primary, fontSize: 20
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: widget.account != null
+                                  ? null
+                                  : () async {
+                                      Currency? cur = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PickCurrencyScreen(
+                                                    currency: widget.currency,
+                                                  )));
+                                      if (cur != null) {
+                                        setState(() {
+                                          widget.currency = cur;
+                                        });
+                                      }
+                                    },
+                              child: Text(
+                                widget.currency.code,
+                                style: TextStyle(
+                                    color: widget.account != null
+                                        ? Colors.black
+                                        : kColorScheme.primary,
+                                    fontSize: 20),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      'Tên tài khoản',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                    ),
-                    TextFormField(
-                      controller: accountName,
-                      maxLength: 50,
-                      style: const TextStyle(fontSize: 18),
-                      decoration: const InputDecoration(
-                        errorStyle: TextStyle(fontSize: 14),
-                        hintText: "Nhập tên tài khoản",
-                        counterText: '',
+                        ],
                       ),
-                      keyboardType: TextInputType.text,
-                      textCapitalization: TextCapitalization.none,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Chưa nhập tên tài khoản';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        accountName.text = value!.trim();
-                      },
-                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                    ),
-                  ],
-                )
+                      Text(
+                        'Tên tài khoản',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      ),
+                      TextFormField(
+                        controller: accountName,
+                        maxLength: 50,
+                        style: const TextStyle(fontSize: 18),
+                        decoration: const InputDecoration(
+                          errorStyle: TextStyle(fontSize: 14),
+                          hintText: "Nhập tên tài khoản",
+                          counterText: '',
+                        ),
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.none,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Chưa nhập tên tài khoản';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          accountName.text = value!.trim();
+                        },
+                        onTapOutside: (event) =>
+                            FocusScope.of(context).unfocus(),
+                      ),
+                    ],
+                  )),
+              const SizedBox(
+                height: 24,
               ),
-              const SizedBox(height: 24,),
               Text(
                 'Biểu tượng',
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
-              const SizedBox(height: 16,),
+              const SizedBox(
+                height: 16,
+              ),
               SizedBox(
-                height: 470,
+                height: 480,
                 child: GridView.count(
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 4,
                   children: List.generate(
                     listIconAccount.length,
                     (index) {
-                        return GestureDetector(
-                          onTap: () {
-                            if (listIconAccount[index].picked == false) {
+                      return GestureDetector(
+                        onTap: () {
+                          if (listIconAccount[index].picked == false) {
                             setState(() {
-                                for(var icon in listIconAccount){
-                                  icon.picked = false;
-                                }
-                                listIconAccount[index].picked = true;
-                                isIconPicked = true;
+                              for (var icon in listIconAccount) {
+                                icon.picked = false;
+                              }
+                              listIconAccount[index].picked = true;
+                              isIconPicked = true;
                             });
-                            }
-                          },
-                          child: CustomIconItem(
-                            icon: listIconAccount[index],
-                            color: colorPicker,
-                          ),
-                        );
+                          }
+                        },
+                        child: CustomIconItem(
+                          icon: listIconAccount[index],
+                          color: colorPicker,
+                        ),
+                      );
                     },
                   ),
                 ),
               ),
-              if(widget.account == null)
+              if (widget.account == null)
                 Text(
                   'Chọn đơn vị tiền tệ',
                   style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
-              if(widget.account == null)
+              if (widget.account == null)
                 InkWell(
                   onTap: () async {
-                    Currency? cur = await Navigator.push(context, MaterialPageRoute(builder: (context) => PickCurrencyScreen(currency: widget.currency,)));
-                    if(cur != null){
+                    Currency? cur = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PickCurrencyScreen(
+                                  currency: widget.currency,
+                                )));
+                    if (cur != null) {
                       setState(() {
                         widget.currency = cur;
                       });
                     }
                   },
-                  child: Text(widget.currency.code,
-                    style: TextStyle(
-                      color: kColorScheme.primary, fontSize: 20
-                    ),
+                  child: Text(
+                    widget.currency.code,
+                    style: TextStyle(color: kColorScheme.primary, fontSize: 20),
                   ),
                 ),
-              widget.account != null && !widget.account!.isMain ? Column(
-                children: [
-                  const SizedBox(height: 18,),
-                  GestureDetector(
-                    onTap: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            contentPadding: const EdgeInsets.all(20),
-                            actionsPadding: const EdgeInsets.only(right: 20),
-                            content: const Text(
-                              'Sau khi xoá tài khoản các giao dịch sẽ mất. Bạn có chắc chắn muốn xoá tài khoản này không?',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,),
-                            ),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(context,false), child: const Text('Huỷ')),
-                              TextButton(onPressed: () async {
-                                Navigator.pop(context);
-                                await FirebaseAPI.deleteAccount(widget.account!.accountId);
-                              }, child: const Text('Xoá')),
-                            ],
-                          );
-                        },
-                      ).then((value) {
-                        if(value){
-                          Navigator.pop(context,true);
-                        }
-                      });
-                    },
-                    child: const Text('XOÁ',style: TextStyle(color: Colors.red,fontSize: 18),),
-                  ),
-                ],
-              ) : Container(),
-              const SizedBox(height: 16,),
+              widget.account != null && !widget.account!.isMain
+                  ? Column(
+                      children: [
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  contentPadding: const EdgeInsets.all(20),
+                                  actionsPadding:
+                                      const EdgeInsets.only(right: 20),
+                                  content: const Text(
+                                    'Sau khi xoá tài khoản các giao dịch sẽ mất. Bạn có chắc chắn muốn xoá tài khoản này không?',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Huỷ')),
+                                    TextButton(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await FirebaseAPI.deleteAccount(
+                                              widget.account!.accountId);
+                                        },
+                                        child: const Text('Xoá')),
+                                  ],
+                                );
+                              },
+                            ).then((value) {
+                              if (value) {
+                                Navigator.pop(context, true);
+                              }
+                            });
+                          },
+                          child: const Text(
+                            'XOÁ',
+                            style: TextStyle(color: Colors.red, fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(),
+              const SizedBox(
+                height: 16,
+              ),
               Text(
                 'Màu sắc',
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
@@ -366,7 +435,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       if (index < 7) {
                         return GestureDetector(
                           onTap: () {
-                            for(var color in listColors){
+                            for (var color in listColors) {
                               color.isSelected = false;
                             }
                             setState(() {
@@ -405,7 +474,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 18,),
+              const SizedBox(
+                height: 18,
+              ),
               Center(
                 child: ElevatedButton(
                   onPressed: isIconPicked == false
@@ -430,7 +501,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
                 ),
               ),
-              const SizedBox(height: 16,)
+              const SizedBox(
+                height: 16,
+              )
             ],
           ),
         ),

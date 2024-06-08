@@ -2,7 +2,7 @@ name: expenses_tracker_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: ">=3.2.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -33,30 +33,36 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  firebase_core: ^2.25.4
-  firebase_auth: ^4.17.4
+  firebase_core: ^3.0.0
+  firebase_auth: ^5.0.0
   eva_icons_flutter: ^3.1.0
-  cloud_firestore: ^4.15.5
+  cloud_firestore: ^5.0.0
   shared_preferences: ^2.2.2
   email_validator: ^2.1.17
   uuid: ^4.3.3
   google_sign_in: ^6.2.1
   flutter_launcher_icons: ^0.13.1
-  fl_chart: ^0.66.2
+  fl_chart: ^0.68.0
   collection: ^1.18.0
   sticky_headers: ^0.3.0+2
-  intl: ^0.18.1
-  month_picker_dialog: ^2.11.1
-  calendar_date_picker2: ^0.5.5
+  intl: ^0.19.0
+  month_picker_dialog: ^4.0.0
+  calendar_date_picker2: ^1.0.3
   flutter_colorpicker: ^1.0.3
-  google_generative_ai: ^0.3.0
+  google_generative_ai: ^0.4.3
   animated_text_kit: ^4.2.2
-  firebase_messaging: ^14.7.19
+  firebase_messaging: ^15.0.0
   flutter_local_notifications: ^17.1.0
   timezone: ^0.9.3
   onesignal_flutter: ^5.1.5
   flutter_dotenv: ^5.1.0
   http: ^1.2.0
+
+dependency_overrides:
+  flutter_colorpicker:
+    git:
+      url: https://github.com/mchome/flutter_colorpicker
+      ref: master # or 786d04363f587b818ce585d25b9c2bb62de95aba
 
 flutter_launcher_icons:
   android: "ic_launcher"
@@ -73,14 +79,13 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

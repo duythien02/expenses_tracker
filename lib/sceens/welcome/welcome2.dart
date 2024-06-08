@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class WelcomScreen2 extends StatefulWidget {
-  const WelcomScreen2 ({super.key});
+  const WelcomScreen2({super.key});
 
   @override
   State<WelcomScreen2> createState() => _WelcomScreen2State();
@@ -22,8 +22,9 @@ class _WelcomScreen2State extends State<WelcomScreen2> {
   void _runFilter(String enteredKeyword) {
     _searchList.clear();
     for (var currency in listCurrency) {
-      if (currency.name.toLowerCase().contains(enteredKeyword.toLowerCase()) || currency.code.toLowerCase().contains(enteredKeyword.toLowerCase())) {
-      _searchList.add(currency);
+      if (currency.name.toLowerCase().contains(enteredKeyword.toLowerCase()) ||
+          currency.code.toLowerCase().contains(enteredKeyword.toLowerCase())) {
+        _searchList.add(currency);
       }
     }
     setState(() {
@@ -35,77 +36,116 @@ class _WelcomScreen2State extends State<WelcomScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnnotatedRegion(
-        value: SystemUiOverlayStyle.light.copyWith(
-          statusBarColor: Theme.of(context).primaryColor
-        ),
+        value: SystemUiOverlayStyle.light
+            .copyWith(statusBarColor: Theme.of(context).primaryColor),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-                children: [
-                  const Text('Chọn đơn vị tiền tệ của bạn',style: TextStyle(color: Colors.black,fontSize: 24),),
-                  searchBar(_runFilter),
-                  const SizedBox(height: 14,),
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context,index) => isSearching 
-                      ? Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          color: _searchList[index].picked  ? kColorScheme.primaryContainer : Colors.white,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if(_searchList.indexWhere((e) => e.picked == true) >= 0){
-                                _searchList[_searchList.indexWhere((e) => e.picked == true)].picked = false;
-                              }
-                              _searchList[index].picked = true;
-                            });
-                          },
-                          child: ListTile(
-                            title: Text(_searchList[index].name),
-                            trailing: Text(_searchList[index].code),
+              children: [
+                const Text(
+                  'Chọn đơn vị tiền tệ của bạn',
+                  style: TextStyle(color: Colors.black, fontSize: 24),
+                ),
+                searchBar(_runFilter),
+                const SizedBox(
+                  height: 14,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => isSearching
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              color: _searchList[index].picked
+                                  ? kColorScheme.primaryContainer
+                                  : Colors.white,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (_searchList.indexWhere(
+                                          (e) => e.picked == true) >=
+                                      0) {
+                                    _searchList[_searchList.indexWhere(
+                                            (e) => e.picked == true)]
+                                        .picked = false;
+                                  }
+                                  _searchList[index].picked = true;
+                                });
+                              },
+                              child: ListTile(
+                                title: Text(_searchList[index].name),
+                                trailing: Text(_searchList[index].code),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              color: listCurrency[index].picked
+                                  ? kColorScheme.primaryContainer
+                                  : kColorScheme.surface,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (listCurrency.indexWhere(
+                                          (e) => e.picked == true) >=
+                                      0) {
+                                    listCurrency[listCurrency.indexWhere(
+                                            (e) => e.picked == true)]
+                                        .picked = false;
+                                  }
+                                  listCurrency[index].picked = true;
+                                });
+                              },
+                              child: ListTile(
+                                title: Text(
+                                  listCurrency[index].name,
+                                ),
+                                trailing: Text(listCurrency[index].code),
+                              ),
+                            ),
                           ),
-                        ),
-                      )
-                      : Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          color: listCurrency[index].picked  ? kColorScheme.primaryContainer : kColorScheme.background,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if(listCurrency.indexWhere((e) => e.picked == true) >= 0){
-                                listCurrency[listCurrency.indexWhere((e) => e.picked == true)].picked = false;
-                              }
-                              listCurrency[index].picked = true;
-                            });
-                          },
-                          child: ListTile(
-                            title: Text(listCurrency[index].name,),
-                            trailing: Text(listCurrency[index].code),
-                          ),
-                        ),
-                      ),
-                      itemCount: isSearching ? _searchList.length :  listCurrency.length,
-                    ),
+                    itemCount:
+                        isSearching ? _searchList.length : listCurrency.length,
                   ),
-                  const SizedBox(height: 12,),
-                  ElevatedButton (
-                    onPressed: (){
-                      if(isSearching){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomScreen3(currency: _searchList[_searchList.indexWhere((e) => e.picked == true)],)));
-                      }
-                      else{
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomScreen3(currency: listCurrency[currencies.indexWhere((e) => e.picked == true)],)));
-                      }
-                    },
-                    child: const Text('Tiếp theo', style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.normal),),
-                    
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (isSearching) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WelcomScreen3(
+                                    currency: _searchList[_searchList
+                                        .indexWhere((e) => e.picked == true)],
+                                  )));
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WelcomScreen3(
+                                    currency: listCurrency[currencies
+                                        .indexWhere((e) => e.picked == true)],
+                                  )));
+                    }
+                  },
+                  child: const Text(
+                    'Tiếp theo',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal),
                   ),
-                ],
+                ),
+              ],
             ),
           ),
         ),

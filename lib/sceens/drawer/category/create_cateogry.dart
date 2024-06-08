@@ -40,13 +40,13 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
       isSubmited = true;
     });
     return await FirebaseAPI.setCategory(
-          widget.category?.categoryId,
-          categoryName.text,
-          colorPicker.value,
-          icon!.iconData.codePoint.toString(),
-          widget.isExpense,
-          widget.category?.createAt,)
-      .whenComplete(() => Navigator.pop(context,widget.isExpense));
+      widget.category?.categoryId,
+      categoryName.text,
+      colorPicker.value,
+      icon!.iconData.codePoint.toString(),
+      widget.isExpense,
+      widget.category?.createAt,
+    ).whenComplete(() => Navigator.pop(context, widget.isExpense));
   }
 
   List<CustomIcon> getIconFromRepo() {
@@ -119,21 +119,33 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
       color.isSelected = false;
     }
     listIcon = getIconFromRepo();
-    listColors = colors.sublist(0,colors.length);
-    if(widget.category != null){
-      icon = CustomIcon(iconData: IconData(int.parse(widget.category!.symbol),fontFamily: "MyIcon"),picked: true);
+    listColors = colors.sublist(0, colors.length);
+    if (widget.category != null) {
+      icon = CustomIcon(
+          iconData: IconData(int.parse(widget.category!.symbol),
+              fontFamily: "MyIcon"),
+          picked: true);
       colorPicker = Color(widget.category!.color);
       widget.isExpense = widget.category!.type;
-      MyColorPicker categoryColor = MyColorPicker(color: colorPicker,isSelected: true);
-      if(listColors.indexWhere((element) => element.color.value == categoryColor.color.value) > - 1){
-        listColors[listColors.indexWhere((element) => element.color.value == categoryColor.color.value)].isSelected = true;
-      }else{
+      MyColorPicker categoryColor =
+          MyColorPicker(color: colorPicker, isSelected: true);
+      if (listColors.indexWhere(
+              (element) => element.color.value == categoryColor.color.value) >
+          -1) {
+        listColors[listColors.indexWhere(
+                (element) => element.color.value == categoryColor.color.value)]
+            .isSelected = true;
+      } else {
         listColors.insert(0, categoryColor);
         listColors.removeLast();
       }
-      if(listIcon.indexWhere((element) => element.iconData.codePoint == icon!.iconData.codePoint) > - 1){
-        listIcon[listIcon.indexWhere((element) => element.iconData.codePoint == icon!.iconData.codePoint)].picked = true;
-      }else{
+      if (listIcon.indexWhere((element) =>
+              element.iconData.codePoint == icon!.iconData.codePoint) >
+          -1) {
+        listIcon[listIcon.indexWhere((element) =>
+                element.iconData.codePoint == icon!.iconData.codePoint)]
+            .picked = true;
+      } else {
         listIcon.insert(0, icon!);
         listIcon.removeLast();
       }
@@ -142,7 +154,7 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     categoryName.dispose();
   }
@@ -151,7 +163,8 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category != null ? 'Chỉnh sửa danh mục' : 'Tạo danh mục'),
+        title: Text(
+            widget.category != null ? 'Chỉnh sửa danh mục' : 'Tạo danh mục'),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
@@ -275,9 +288,9 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
               height: 8,
             ),
             Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.all(10.0),
               child: SizedBox(
-                height: 370,
+                height: 380,
                 child: GridView.count(
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 4,
@@ -287,15 +300,15 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                       if (index < listIcon.length) {
                         return GestureDetector(
                           onTap: () {
-                              if (listIcon[index].picked == false) {
-                                setState(() {
-                                  for(var icon in listIcon){
+                            if (listIcon[index].picked == false) {
+                              setState(() {
+                                for (var icon in listIcon) {
                                   icon.picked = false;
                                 }
                                 listIcon[index].picked = true;
                                 icon = listIcon[index];
-                                });
-                              }
+                              });
+                            }
                           },
                           child: CustomIconItem(
                             icon: listIcon[index],
@@ -305,12 +318,17 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                       } else {
                         return GestureDetector(
                           onTap: () async {
-                            var newIcon = await Navigator.push(context,MaterialPageRoute(builder: (context) => IconRepoScreen(color: colorPicker,)));
+                            var newIcon = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => IconRepoScreen(
+                                          color: colorPicker,
+                                        )));
                             if (newIcon != null) {
                               setState(() {
                                 icon = newIcon;
                                 if (!listIcon.contains(icon)) {
-                                  for(var icon in listIcon){
+                                  for (var icon in listIcon) {
                                     icon.picked = false;
                                   }
                                   listIcon.removeLast();
@@ -349,8 +367,8 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                     if (index < 7) {
                       return GestureDetector(
                         onTap: () {
-                          if(listColors[index].isSelected == false){
-                            for(var color in listColors){
+                          if (listColors[index].isSelected == false) {
+                            for (var color in listColors) {
                               color.isSelected = false;
                             }
                             setState(() {
@@ -390,7 +408,9 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 32,),
+            const SizedBox(
+              height: 32,
+            ),
             Center(
               child: ElevatedButton(
                 onPressed: icon == null
@@ -415,7 +435,9 @@ class _CreateCategoryState extends State<CreateCategoryScreen> {
                       ),
               ),
             ),
-            const SizedBox(height: 16,)
+            const SizedBox(
+              height: 16,
+            )
           ],
         ),
       ),

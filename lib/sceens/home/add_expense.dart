@@ -13,12 +13,13 @@ import '../../main.dart';
 
 // ignore: must_be_immutable
 class AddExpenseScreen extends StatefulWidget {
-  AddExpenseScreen(
-      {super.key,
-      required this.isExpense,
-      this.listAccount,
-      required this.currentAccount,
-      this.expense,});
+  AddExpenseScreen({
+    super.key,
+    required this.isExpense,
+    this.listAccount,
+    required this.currentAccount,
+    this.expense,
+  });
   bool isExpense;
   final List<Account>? listAccount;
   Account currentAccount;
@@ -46,75 +47,78 @@ class _AddExpenseState extends State<AddExpenseScreen> {
   @override
   void initState() {
     super.initState();
-    if(widget.expense != null){
+    if (widget.expense != null) {
       getCategoryOfExpense();
       isCategoryPicked = true;
-      if (!currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode)) {
+      if (!currenciesCodeHasDecimal
+          .contains(widget.currentAccount.currencyCode)) {
         amount.text = widget.expense!.amount.toStringAsFixed(0);
-      }else{
+      } else {
         amount.text = widget.expense!.amount.toStringAsFixed(2);
       }
-      if(widget.expense!.note != null){
+      if (widget.expense!.note != null) {
         note.text = widget.expense!.note!;
       }
       selectedDate = widget.expense!.date;
     }
   }
+
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     amount.dispose();
     note.dispose();
   }
 
-  Future<void> getCategoryOfExpense() async{
+  Future<void> getCategoryOfExpense() async {
     await FirebaseAPI.getCategory(widget.expense!.categoryId).then((value) {
       setState(() {
         category = value;
-        category!.picked =  true;
+        category!.picked = true;
       });
     });
   }
 
   void addExpense() async {
-    if ( formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       setState(() {
         isSubmited = true;
       });
       FocusScope.of(context).unfocus();
       bool isChangeTypeExpense = false;
-      if(widget.expense != null){
-        if(widget.expense!.type == true && widget.isExpense == false || widget.expense!.type == false && widget.isExpense == true){
+      if (widget.expense != null) {
+        if (widget.expense!.type == true && widget.isExpense == false ||
+            widget.expense!.type == false && widget.isExpense == true) {
           isChangeTypeExpense = true;
         }
         await FirebaseAPI.editExpense(
-          widget.expense!.expenseId,
-          double.parse(amount.text),
-          widget.expense!.amount,
-          listCategories.firstWhere((element) => element.picked == true),
-          selectedDate,
-          note.text.isEmpty ? null : note.text,
-          widget.currentAccount.accountId,
-          widget.isExpense,
-          isChangeTypeExpense
-        ).whenComplete(() => Navigator.popUntil(context, (route) => route.isFirst));
-      }else{
+                widget.expense!.expenseId,
+                double.parse(amount.text),
+                widget.expense!.amount,
+                listCategories.firstWhere((element) => element.picked == true),
+                selectedDate,
+                note.text.isEmpty ? null : note.text,
+                widget.currentAccount.accountId,
+                widget.isExpense,
+                isChangeTypeExpense)
+            .whenComplete(
+                () => Navigator.popUntil(context, (route) => route.isFirst));
+      } else {
         await FirebaseAPI.addExpense(
-          double.parse(amount.text),
-          listCategories.firstWhere((element) => element.picked == true),
-          selectedDate,
-          note.text.isEmpty ? null : note.text,
-          widget.currentAccount.accountId,
-          widget.isExpense
-        ).whenComplete(() => Navigator.pop(context));
+                double.parse(amount.text),
+                listCategories.firstWhere((element) => element.picked == true),
+                selectedDate,
+                note.text.isEmpty ? null : note.text,
+                widget.currentAccount.accountId,
+                widget.isExpense)
+            .whenComplete(() => Navigator.pop(context));
       }
     }
   }
 
   String moneyFormat(Account account) {
-    var format = NumberFormat.simpleCurrency(
-        locale: account.currencyLocale); 
+    var format = NumberFormat.simpleCurrency(locale: account.currencyLocale);
     return format.format(account.accountBalance);
   }
 
@@ -214,7 +218,7 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                             child: TextFormField(
                               controller: amount,
                               maxLength: 15,
-                              autofocus: true,
+                              //autofocus: true,
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 20),
@@ -227,25 +231,33 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                               inputFormatters: [
                                 FilteringTextInputFormatter.deny(RegExp('-')),
                                 FilteringTextInputFormatter.deny(RegExp(',')),
-                                if(!currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode))
-                                 FilteringTextInputFormatter.allow(RegExp(r"\d+([\.]\d+)?")),
+                                if (!currenciesCodeHasDecimal.contains(
+                                    widget.currentAccount.currencyCode))
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r"\d+([\.]\d+)?")),
                               ],
                               validator: (value) {
-                                if (value == null || value.isEmpty){
+                                if (value == null || value.isEmpty) {
                                   return 'Vui lòng nhập số tiền';
-                                }else if(double.tryParse(value) == null || double.parse(value) == 0 || value.contains('.') && value.split('.')[1].length > 2){
+                                } else if (double.tryParse(value) == null ||
+                                    double.parse(value) == 0 ||
+                                    value.contains('.') &&
+                                        value.split('.')[1].length > 2) {
                                   return 'Số tiền không hợp lệ';
                                 }
                                 return null;
                               },
+                              onChanged: (value) {},
                               onSaved: (value) {
-                                if(currenciesCodeHasDecimal.contains(widget.currentAccount.currencyCode)){
+                                if (currenciesCodeHasDecimal.contains(
+                                    widget.currentAccount.currencyCode)) {
                                   amount.text = value!.trim();
-                                }else{
+                                } else {
                                   amount.text = value!.split('.')[0];
                                 }
                               },
-                              onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                              onTapOutside: (event) =>
+                                  FocusScope.of(context).unfocus(),
                             ),
                           ),
                         ),
@@ -269,53 +281,67 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                       height: 5,
                     ),
                     GestureDetector(
-                      onTap: widget.expense != null ? null : () async {
-                        await showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Huỷ'))
-                                  ],
-                                  title: const Text('Chọn tài khoản'),
-                                  contentPadding: const EdgeInsets.all(10),
-                                  content: IntrinsicHeight(
-                                    child: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width / 2,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children: List.generate(
-                                              widget.listAccount!.length,
-                                              (index) => RadioListTile(
-                                                    title: Text(
-                                                      widget.listAccount![index]
-                                                          .accountName,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                    ),
-                                                    subtitle: Text(moneyFormat(
-                                                        widget
-                                                            .listAccount![index])),
-                                                    value: widget.listAccount![index],
-                                                    groupValue: widget.currentAccount,
-                                                    onChanged: (value) {
-                                                      Navigator.pop(context);
-                                                      setState(() {
-                                                        widget.currentAccount = value!;
-                                                      });
-                                                    },
-                                                  )),
+                      onTap: widget.expense != null
+                          ? null
+                          : () async {
+                              await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Huỷ'))
+                                        ],
+                                        title: const Text('Chọn tài khoản'),
+                                        contentPadding:
+                                            const EdgeInsets.all(10),
+                                        content: IntrinsicHeight(
+                                          child: SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                2,
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: List.generate(
+                                                    widget.listAccount!.length,
+                                                    (index) => RadioListTile(
+                                                          title: Text(
+                                                            widget
+                                                                .listAccount![
+                                                                    index]
+                                                                .accountName,
+                                                            style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                          subtitle: Text(
+                                                              moneyFormat(widget
+                                                                      .listAccount![
+                                                                  index])),
+                                                          value: widget
+                                                                  .listAccount![
+                                                              index],
+                                                          groupValue: widget
+                                                              .currentAccount,
+                                                          onChanged: (value) {
+                                                            Navigator.pop(
+                                                                context);
+                                                            setState(() {
+                                                              widget.currentAccount =
+                                                                  value!;
+                                                            });
+                                                          },
+                                                        )),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ));
-                      },
+                                      ));
+                            },
                       child: Text(widget.currentAccount.accountName,
                           style: TextStyle(
                               color: Theme.of(context)
@@ -340,29 +366,48 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                           );
                         }
                         if (categoryData.hasData) {
-                        categoryData.data!.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
+                          categoryData.data!.sort((category1, category2) =>
+                              category2.createAt.compareTo(category1.createAt));
                           listCategories = (categoryData.data!
-                                    .where((e) => e.type == widget.isExpense))
-                                .toList();
-                              if(category != null){
-                                if (listCategories.contains(category) ) {
-                                  if(category!.type == widget.isExpense && listCategories.indexWhere((element) => element.categoryId == category!.categoryId) > 6){
-                                    listCategories.removeWhere((element) => element.categoryId == category!.categoryId);
-                                    listCategories.insert(0, category!);
-                                  }
-                                }else{
-                                  if(category!.type == widget.isExpense && listCategories.indexWhere((element) => element.categoryId == category!.categoryId) > 6){
-                                    listCategories.removeWhere((element) => element.categoryId == category!.categoryId);
-                                    listCategories.insert(0, category!);
-                                  }else{
-                                    if( listCategories.indexWhere((element) => element.categoryId == category!.categoryId) > -1){
-                                      int index = listCategories.indexWhere((element) => element.categoryId == category!.categoryId);
-                                      listCategories.removeWhere((element) => element.categoryId == category!.categoryId);
-                                      listCategories.insert(index, category!);
-                                    }
-                                  }
+                                  .where((e) => e.type == widget.isExpense))
+                              .toList();
+                          if (category != null) {
+                            if (listCategories.contains(category)) {
+                              if (category!.type == widget.isExpense &&
+                                  listCategories.indexWhere((element) =>
+                                          element.categoryId ==
+                                          category!.categoryId) >
+                                      6) {
+                                listCategories.removeWhere((element) =>
+                                    element.categoryId == category!.categoryId);
+                                listCategories.insert(0, category!);
+                              }
+                            } else {
+                              if (category!.type == widget.isExpense &&
+                                  listCategories.indexWhere((element) =>
+                                          element.categoryId ==
+                                          category!.categoryId) >
+                                      6) {
+                                listCategories.removeWhere((element) =>
+                                    element.categoryId == category!.categoryId);
+                                listCategories.insert(0, category!);
+                              } else {
+                                if (listCategories.indexWhere((element) =>
+                                        element.categoryId ==
+                                        category!.categoryId) >
+                                    -1) {
+                                  int index = listCategories.indexWhere(
+                                      (element) =>
+                                          element.categoryId ==
+                                          category!.categoryId);
+                                  listCategories.removeWhere((element) =>
+                                      element.categoryId ==
+                                      category!.categoryId);
+                                  listCategories.insert(index, category!);
                                 }
                               }
+                            }
+                          }
                           return Container(
                             margin: const EdgeInsets.only(top: 10),
                             height: MediaQuery.of(context).size.width / 2 - 15,
@@ -377,14 +422,16 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                       index < listCategories.length)) {
                                     return GestureDetector(
                                       onTap: () {
-                                        if (listCategories[index].picked == false){
+                                        if (listCategories[index].picked ==
+                                            false) {
                                           setState(() {
-                                            for(var category in listCategories){
+                                            for (var category
+                                                in listCategories) {
                                               category.picked = false;
                                             }
                                             isCategoryPicked = true;
                                             listCategories[index].picked = true;
-                                        });
+                                          });
                                         }
                                       },
                                       child: CategoryItem(
@@ -396,31 +443,48 @@ class _AddExpenseState extends State<AddExpenseScreen> {
                                     return GestureDetector(
                                       onTap: () async {
                                         // chuyển đến màn hình mở rộng danh mục
-                                        var categoryFromExpandCategoryScreen = await Navigator.push(context, MaterialPageRoute(builder: (context) => ExpandCategoryScreen(listCategories: listCategories, isExpense: widget.isExpense,)));
-                                        if(categoryFromExpandCategoryScreen != null){
-                                          if(categoryFromExpandCategoryScreen == true){
+                                        var categoryFromExpandCategoryScreen =
+                                            await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ExpandCategoryScreen(
+                                              listCategories: listCategories,
+                                              isExpense: widget.isExpense,
+                                            ),
+                                          ),
+                                        );
+                                        if (categoryFromExpandCategoryScreen !=
+                                            null) {
+                                          if (categoryFromExpandCategoryScreen ==
+                                              true) {
                                             // tạo một category mới
-                                              category = null;
-                                              getCategory = FirebaseAPI.getAllCategories();
-                                              getCategory.then((value) {
-                                                value.sort((category1 ,category2) => category2.createAt.compareTo(category1.createAt));
-                                                if(value[0].type == true){
-                                                  setState(() {
-                                                    widget.isExpense = true;
-                                                    isCategoryPicked = true;
-                                                  });
-                                                }else{
-                                                  setState(() {
-                                                    widget.isExpense = false;
-                                                    isCategoryPicked = true;
-                                                  });
-                                                }
-                                                value[0].picked = true;
-                                              });
-                                          }else{
+                                            category = null;
+                                            getCategory =
+                                                FirebaseAPI.getAllCategories();
+                                            getCategory.then((value) {
+                                              value.sort((category1,
+                                                      category2) =>
+                                                  category2.createAt.compareTo(
+                                                      category1.createAt));
+                                              if (value[0].type == true) {
+                                                setState(() {
+                                                  widget.isExpense = true;
+                                                  isCategoryPicked = true;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  widget.isExpense = false;
+                                                  isCategoryPicked = true;
+                                                });
+                                              }
+                                              value[0].picked = true;
+                                            });
+                                          } else {
                                             // chọn một category khác
                                             setState(() {
-                                              category = categoryFromExpandCategoryScreen;
+                                              category =
+                                                  categoryFromExpandCategoryScreen;
                                               isCategoryPicked = true;
                                             });
                                           }
